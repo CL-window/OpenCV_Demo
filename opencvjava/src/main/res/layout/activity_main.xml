@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+   <Button
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:textAllCaps="false"
+       android:text="camera preview"
+       android:onClick="onCameraPreviewClick"/>
+
+   <Button
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:textAllCaps="false"
+       android:text="mix processing"
+       android:onClick="onMixProcessClick"/>
+
+   <Button
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:textAllCaps="false"
+       android:text="camera ctrl"
+       android:onClick="onCameraCtrlClick"/>
+
+   <Button
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:textAllCaps="false"
+       android:text="image manipulations"
+       android:onClick="onImageManipulationClick"/>
+
+   <Button
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:textAllCaps="false"
+       android:text="puzzle 15"
+       android:onClick="onPuzzleClick"/>
+
+   <Button
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:textAllCaps="false"
+       android:text="CameraCalibration"
+       android:onClick="onCameraCalibrationClick"/>
+
+   <Button
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:textAllCaps="false"
+       android:text="ColorBlobDetection"
+       android:onClick="onColorBlobDetectionClick"/>
+</LinearLayout>
