@@ -12,6 +12,7 @@
 ### 使用C++协同开发<font size=1>我是这么一个步骤，有些可以不用这样</font>
 1. 新建一个工程，勾选或者不勾选 include C++都可以
 1. 在新建一个openCVCode module
+1. 新建一个文件夹 比如我的叫 NativeDependLibs 
 1. 新建 src/main/jniLibs , 复制 OpenCV-android-sdk/sdk/native/libs 下文件放在jniLibs下，我只编译armeabi ，所以只复制了 armeabi
 1. 新建一个cpp文件夹 src/main/cpp，并暂时随便新建一个.cpp文件
 1. 新建 CMakeLists.txt

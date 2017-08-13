@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.4.1)
 
 
 #配置加载native依赖
-set(libs "${CMAKE_SOURCE_DIR}/NativeDependLibs/OpenCV/libs")
+set(libs "${CMAKE_SOURCE_DIR}/src/main/jniLibs")
 include_directories(
         NativeDependLibs/OpenCV/jni/include
 )
