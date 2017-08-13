@@ -87,7 +87,7 @@ android {
 
 }
 ```
-9. build 一下项目，去那个临时的cpp文件里测试一下，可以成功引入OpenCV的库，下面就可以直接在C代码里使用OpenCV
+1. build 一下项目，去那个临时的cpp文件里测试一下，可以成功引入OpenCV的库，下面就可以直接在C代码里使用OpenCV
 
 大致文件结构
 ```
@@ -105,6 +105,13 @@ android {
 |               |___jniLibs (libs)
 ```
 
+## Face Detection
+opencvSample/facedetect/FaceDetectionActivity.java
+1. onResume 里加载OpenCV的库，回调里面加载人脸识别库
+1. lbpcascade_frontalface.xml 这个文件是官方提供的人脸检测的LBP分类器，检测到人脸画一个方形框
+1. 在 onCameraFrame 里拿到每一帧Camera Preview 的数据，进行人脸识别
+1. 这位小哥的[人脸眼睛识别](http://romanhosek.cz/android-eye-detection-and-tracking-with-opencv/) 感觉识别的效果，模拟来说够了，但是实用就不行了
+1. 
 
 
 

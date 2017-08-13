@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
@@ -10,4 +10,11 @@
         android:id="@+id/fd_activity_surface_view"
         app:camera_id="front"/>
 
-</LinearLayout>
+    <com.cl.slack.opencvSample.facedetect.VerticalSeekBar
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="40dp"
+        android:id="@+id/vertical_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</FrameLayout>

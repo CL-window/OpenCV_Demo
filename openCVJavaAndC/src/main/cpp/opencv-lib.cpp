@@ -52,6 +52,7 @@ Java_com_cl_slack_opencv_JNI_findFeatures(JNIEnv *env, jclass type,
 
     Ptr<FeatureDetector> detector = FastFeatureDetector::create(50);
     detector->detect(mGr, v);
+    LOGD("findFeatures size:%d ", v.size());
     for( unsigned int i = 0; i < v.size(); i++ )
     {
         const KeyPoint& kp = v[i];
