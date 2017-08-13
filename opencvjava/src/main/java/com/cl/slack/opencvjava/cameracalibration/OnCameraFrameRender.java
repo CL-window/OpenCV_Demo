@@ -14,6 +14,8 @@ import org.opencv.imgproc.Imgproc;
 
 import android.content.res.Resources;
 
+import com.cl.slack.opencvjava.R;
+
 abstract class FrameRender {
     protected CameraCalibrator mCalibrator;
 

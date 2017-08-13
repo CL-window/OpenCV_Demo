@@ -24,7 +24,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".CameraPreviewActivity"/>
-        <activity android:name=".MixedProcessingActivity"/>
         <activity android:name=".CameraControlActivity"/>
         <activity android:name=".ImageManipulationsActivity">
         </activity>

@@ -14,4 +14,15 @@ public class JNI {
     public static native String stringFromJNI();
 
     public static native int[] getGrayImage(int[] src, int w, int h);
+
+    public static native void findFeatures(long matAddrGr, long matAddrRgba);
+
+
+    // face detection
+    public static native long nativeCreateObject(String cascadeName, int minFaceSize);
+    public static native void nativeDestroyObject(long thiz);
+    public static native void nativeStart(long thiz);
+    public static native void nativeStop(long thiz);
+    public static native void nativeSetFaceSize(long thiz, int size);
+    public static native void nativeDetect(long thiz, long inputImage, long faces);
 }

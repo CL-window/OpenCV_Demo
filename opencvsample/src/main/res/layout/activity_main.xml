@@ -8,20 +8,25 @@
     android:orientation="vertical"
     tools:context="com.cl.slack.opencvSample.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Gray Image"
         android:textAllCaps="false"
         android:onClick="openCVGrayClick"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:text="mix processing"
+        android:onClick="onMixProcessClick"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAllCaps="false"
+        android:text="face Detection"
+        android:onClick="onFaceDetectClick"/>
 
 </LinearLayout>

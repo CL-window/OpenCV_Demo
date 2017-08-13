@@ -29,10 +29,6 @@ public class MainActivity extends AppCompatActivity {
         startNewActivity(CameraControlActivity.class);
     }
 
-    public void onMixProcessClick(View view) {
-        startNewActivity(MixedProcessingActivity.class);
-    }
-
     public void onImageManipulationClick(View view) {
         startNewActivity(ImageManipulationsActivity.class);
     }

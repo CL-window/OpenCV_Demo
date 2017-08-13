@@ -32,9 +32,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".JavaCameraActivity">
-        </activity>
-        <activity android:name=".GrayActivity">
+        <activity android:name=".MixedProcessingActivity"/>
+        <activity android:name=".GrayActivity"/>
+        <activity android:name=".facedetect.FaceDetectionActivity">
         </activity>
     </application>
 
