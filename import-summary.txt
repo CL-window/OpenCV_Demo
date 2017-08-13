@@ -7,7 +7,9 @@ The following files were *not* copied into the new Gradle project; you
 should evaluate whether these are still needed in your project and if
 so manually move them:
 
+* .DS_Store
 * javadoc/
+* javadoc/.DS_Store
 * javadoc/allclasses-frame.html
 * javadoc/allclasses-noframe.html
 * javadoc/constant-values.html
@@ -222,11 +224,14 @@ Moved Files:
 Android Gradle projects use a different directory structure than ADT
 Eclipse projects. Here's how the projects were restructured:
 
-* AndroidManifest.xml => openCVLibrary330/src/main/AndroidManifest.xml
-* lint.xml => openCVLibrary330/lint.xml
-* res/ => openCVLibrary330/src/main/res/
-* src/ => openCVLibrary330/src/main/java/
-* src/org/opencv/engine/OpenCVEngineInterface.aidl => openCVLibrary330/src/main/aidl/org/opencv/engine/OpenCVEngineInterface.aidl
+* AndroidManifest.xml => openCVJavaAndC/src/main/AndroidManifest.xml
+* lint.xml => openCVJavaAndC/lint.xml
+* res/ => openCVJavaAndC/src/main/res/
+* src/ => openCVJavaAndC/src/main/java/
+* src/.DS_Store => openCVJavaAndC/src/main/resources/.DS_Store
+* src/org/.DS_Store => openCVJavaAndC/src/main/resources/org/.DS_Store
+* src/org/opencv/.DS_Store => openCVJavaAndC/src/main/resources/org/opencv/.DS_Store
+* src/org/opencv/engine/OpenCVEngineInterface.aidl => openCVJavaAndC/src/main/aidl/org/opencv/engine/OpenCVEngineInterface.aidl
 
 Next Steps:
 -----------

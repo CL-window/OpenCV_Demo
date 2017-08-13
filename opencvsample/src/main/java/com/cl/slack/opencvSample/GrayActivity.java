@@ -7,7 +7,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
-import slack.cl.com.opencv.JNIWrapper;
+import com.cl.slack.opencv.JNIWrapper;
+
 
 /**
  * 处理图片 灰色 注意图片不能太大，之前没有注意，出现过

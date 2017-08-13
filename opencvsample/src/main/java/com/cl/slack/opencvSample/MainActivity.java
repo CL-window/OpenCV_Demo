@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
-import slack.cl.com.opencv.JNIWrapper;
+import com.cl.slack.opencv.JNIWrapper;
 
 public class MainActivity extends AppCompatActivity {
 

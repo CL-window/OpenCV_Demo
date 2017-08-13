@@ -1,0 +1,32 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.0"
+
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 25
+
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_TOOLCHAIN=gcc",
+                        "-DANDROID_STUDIO=TRUE",
+                        "-DANDROID_BUILD_TARGET=opencv-c-lib",// lib name
+                        "-DANDROID_ABI=armeabi",
+                        "-DBUILD_TYPE=debug",
+                        "-DFOR_SDK=NO"
+
+                cppFlags "-std=c++11 -frtti -fexceptions -w"
+                abiFilters 'armeabi'//, 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a', 'mips', 'mips64'
+            }
+        }
+
+    }
+
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+        }
+    }
+}

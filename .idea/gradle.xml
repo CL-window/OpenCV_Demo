@@ -9,7 +9,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/openCVCode" />
+            <option value="$PROJECT_DIR$/openCVC" />
+            <option value="$PROJECT_DIR$/openCVJavaAndC" />
             <option value="$PROJECT_DIR$/openCVLibrary330" />
             <option value="$PROJECT_DIR$/opencvjava" />
             <option value="$PROJECT_DIR$/opencvsample" />
