@@ -200,7 +200,6 @@ public class FaceDetectionActivity extends AppCompatActivity implements CvCamera
         mOpenCvCameraView = (JavaCameraView) findViewById(R.id.fd_activity_surface_view);
         mOpenCvCameraView.setVisibility(CameraBridgeViewBase.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
-        mOpenCvCameraView.updateOritation(false);
 
         VerticalSeekBar seekBar = (VerticalSeekBar) findViewById(R.id.vertical_seekbar);
         seekBar.setMax(5);
@@ -337,6 +336,7 @@ public class FaceDetectionActivity extends AppCompatActivity implements CvCamera
         }
 
         Rect[] facesArray = faces.toArray();
+        Log.e(TAG, "recognition size: " + facesArray.length);
         for (int i = 0; i < facesArray.length; i++) {
             /**
              * Mat类型的图上绘制矩形

@@ -112,8 +112,8 @@ opencvSample/facedetect/FaceDetectionActivity.java
 1. 在 onCameraFrame 里拿到每一帧Camera Preview 的数据，进行人脸检测,
 1. 总结起来就是 OpenCV有一个自己的org.opencv.android.JavaCameraView自定义控件，它循环的从摄像头抓取数据，在回调方法中，我们能获取到Mat数据，然后通过调用检测当前是否有人脸，我们会获取到一个MatOfRect 是一个Rect数组，里面会有人脸数据，最后将人脸画在屏幕上
 1. 拿到人脸后，绘制人脸框使用的是 Imgproc.rectangle
-```
-/**
+    ```
+            /**
              * Mat类型的图上绘制矩形
              * rectangle(Mat img, //图像
              *           Point pt1, //矩形的一个顶点
@@ -124,7 +124,7 @@ opencvSample/facedetect/FaceDetectionActivity.java
              *           int shift //坐标点的小数点位数
              *           )
              */
-```
+    ```
 1. 这位小哥的[人脸眼睛检测](http://romanhosek.cz/android-eye-detection-and-tracking-with-opencv/) 感觉检测的效果，模拟来说够了，但是实用就不行了
 1. 下面是在[官方文档](http://docs.opencv.org/3.3.0/index.html)中列出的最重要的模块。C层和java层都有相应的库
     1. core：简洁的核心模块，定义了基本的数据结构，包括稠密多维数组 Mat 和其他模块需要的基本函数。
@@ -136,8 +136,42 @@ opencvSample/facedetect/FaceDetectionActivity.java
     1. ml：多种机器学习算法，如 K 均值、支持向量机和神经网络。
     1. highgui：一个简单易用的接口，提供视频捕捉、图像和视频编码等功能，还有简单的 UI 接口 
     1. ... and so on
+1. 前后摄像头切换(需要判断是否存在改相机，部分手机只有一个摄像头)
+1. 预览画布调整 ：
+    1. 前置：默认是横屏的，需要转成竖屏显示, 前置镜像
+    1. 后置:默认是横屏的，需要转成竖屏显示
+    ```
+    protected Mat rotateMat(Mat src) {
+
+        if(mCameraIndex == CAMERA_ID_FRONT) {
+            // 竖屏需要选择 rotate
+            /**
+             * transpose : 矩阵转置
+             * 矩阵转置是将矩阵的行与列顺序对调（第i行转变为第i列）形成一个新的矩阵
+             */
+            Core.transpose(src, mRgbaT); //转置函数，可以水平的图像变为垂直
+            Imgproc.resize(mRgbaT,src, src.size(), 0.0D, 0.0D, 0); //将转置后的图像缩放为src的大小
+            // 左右镜像
+            /**
+             * flip(Mat src, //输入矩阵
+             *      Mat dst, //翻转后矩阵，类型与src一致
+             *      int flipCode //翻转模式，flipCode==0垂直翻转（沿X轴翻转），flipCode>0水平翻转（沿Y轴翻转），
+             *                  flipCode<0水平垂直翻转（先沿X轴翻转，再沿Y轴翻转，等价于旋转180°）
+             *      )
+             */
+            Core.flip(src, src, -1);
+        } else {
+            Core.transpose(src, mRgbaT);
+            Imgproc.resize(mRgbaT,src, src.size(), 0.0D, 0.0D, 0);
+            Core.flip(src, src, 1);
+        }
+        return super.rotateMat(src);
+    }
+    ```
+
 
 
 
 注：可以参考的文章
-* [Android Studio 2.3利用CMAKE进行OpenCV 3.2的NDK开发](http://johnhany.net/2017/07/opencv-ndk-dev-with-cmake-on-android-studio/                |___jniLibs (libs)
+* [Android Studio 2.3利用CMAKE进行OpenCV 3.2的NDK开发](http://johnhany.net/2017/07/opencv-ndk-dev-with-cmake-on-android-studio/)               
+* [OpenCV—基本矩阵操作与示例](http://blog.csdn.net/iracer/article/details/51296631)

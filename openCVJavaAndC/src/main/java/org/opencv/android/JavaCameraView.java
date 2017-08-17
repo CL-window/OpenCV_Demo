@@ -362,11 +362,8 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
     @Override
     protected Mat rotateMat(Mat src) {
 
-        int h = src.rows();
-        int w = src.cols();
         if(mCameraIndex == CAMERA_ID_FRONT) {
             // 竖屏需要选择 rotate
-
             /**
              * transpose : 矩阵转置
              * 矩阵转置是将矩阵的行与列顺序对调（第i行转变为第i列）形成一个新的矩阵
