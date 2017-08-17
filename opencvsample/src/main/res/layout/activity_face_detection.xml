@@ -11,6 +11,7 @@
         app:camera_id="front"/>
 
     <com.cl.slack.opencvSample.facedetect.VerticalSeekBar
+        android:visibility="gone"
         android:layout_gravity="bottom"
         android:layout_marginBottom="40dp"
         android:id="@+id/vertical_seekbar"

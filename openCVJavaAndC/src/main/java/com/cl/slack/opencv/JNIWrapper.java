@@ -50,4 +50,9 @@ public class JNIWrapper {
     public static double nativeFaceRecognition(long thiz, Mat face1, Mat face2) {
         return JNI.nativeFaceRecognition(thiz, face1.getNativeObjAddr(), face2.getNativeObjAddr());
     }
+
+
+    public static void rotate(Mat img, int degree){
+        JNI.rotate(img.getNativeObjAddr(), degree);
+    }
 }

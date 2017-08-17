@@ -28,4 +28,6 @@ public class JNI {
 
     //
     public static native double nativeFaceRecognition(long thiz, long face1, long face2);
+
+    public static native void rotate(long img, int degree);
 }

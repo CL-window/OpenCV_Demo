@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.ViewGroup.LayoutParams;
 
+import com.cl.slack.opencv.JNIWrapper;
+
 import org.opencv.BuildConfig;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -206,11 +208,7 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
                     mFrameHeight = params.getPreviewSize().height;
 
                     if ((getLayoutParams().width == LayoutParams.MATCH_PARENT) && (getLayoutParams().height == LayoutParams.MATCH_PARENT))
-                        if(mPortrait) {
-                            mScale = Math.min(((float) height) / mFrameWidth, ((float) width) / mFrameHeight);
-                        } else {
-                            mScale = Math.min(((float) height) / mFrameHeight, ((float) width) / mFrameWidth);
-                        }
+                        mScale = Math.min(((float) height) / mFrameWidth, ((float) width) / mFrameHeight);
                     else
                         mScale = 0;
 
@@ -355,14 +353,26 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
             mCamera.addCallbackBuffer(mBuffer);
     }
 
-    // TODO ： 摄像头开一会儿，异常崩溃，目前没有找到原因...
+    private Mat mRgbaT = new Mat();
+
+    /**
+     *  TODO ： 摄像头开一会儿，异常崩溃，目前没有找到原因... 目测是每次进来这里 new Mat 的缘故，
+     *  旋转画布
+     */
     @Override
     protected Mat rotateMat(Mat src) {
+
+        int h = src.rows();
+        int w = src.cols();
         if(mCameraIndex == CAMERA_ID_FRONT) {
             // 竖屏需要选择 rotate
-            Mat rotateMat = Imgproc.getRotationMatrix2D(new Point(src.rows() / 2, src.cols() / 2), oritation, 1);
-            Imgproc.warpAffine(src, src, rotateMat, src.size());
 
+            /**
+             * transpose : 矩阵转置
+             * 矩阵转置是将矩阵的行与列顺序对调（第i行转变为第i列）形成一个新的矩阵
+             */
+            Core.transpose(src, mRgbaT); //转置函数，可以水平的图像变为垂直
+            Imgproc.resize(mRgbaT,src, src.size(), 0.0D, 0.0D, 0); //将转置后的图像缩放为src的大小
             // 左右镜像
             /**
              * flip(Mat src, //输入矩阵
@@ -371,15 +381,13 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
              *                  flipCode<0水平垂直翻转（先沿X轴翻转，再沿Y轴翻转，等价于旋转180°）
              *      )
              */
-            Core.flip(src, src, 1);
-            return src;
+            Core.flip(src, src, -1);
         } else {
-            // 后置
-            Mat rotateMat = Imgproc.getRotationMatrix2D(new Point(src.rows() / 2, src.cols() / 2), -oritation, 1);
-            Imgproc.warpAffine(src, src, rotateMat, src.size());
-
-            return super.rotateMat(src);
+            Core.transpose(src, mRgbaT);
+            Imgproc.resize(mRgbaT,src, src.size(), 0.0D, 0.0D, 0);
+            Core.flip(src, src, 1);
         }
+        return super.rotateMat(src);
     }
 
     private class JavaCameraFrame implements CvCameraViewFrame {

@@ -260,4 +260,45 @@ Java_com_cl_slack_opencv_JNI_nativeFaceRecognition(JNIEnv *env, jclass type, jlo
     return faceRecognition(thiz, face1, face2);
 }
 
+void swap(unsigned char& a, unsigned char& b){
+    char c = a;
+    a = b;
+    b = c;
+}
+
+void rotate90(Mat mat) {
+    int w = mat.cols;
+    int h = mat.rows;
+    for (int i = 0; i < w; i++)
+    {
+        for (int j = 0; j < h; j++)
+        {
+            int I = h - 1 - j;
+            int J = i;
+            while ((i*h + j) > (I*w + J))
+            {
+                int p = I*w + J;
+                int tmp_i = p / h;
+                int tmp_j = p % h;
+                I = h - 1 - tmp_j;
+                J = tmp_i;
+            }
+            swap(*(mat.data + i*h*3 + j*3 + 0), *(mat.data + I*w*3 + J*3 + 0));
+            swap(*(mat.data + i*h*3 + j*3 + 1), *(mat.data + I*w*3 + J*3 + 1));
+            swap(*(mat.data + i*h*3 + j*3 + 2), *(mat.data + I*w*3 + J*3 + 2));
+        }
+    }
+
+    mat.cols = h;
+    mat.rows = w;
+    mat.step = h*3;
+}
+
+JNIEXPORT void JNICALL
+Java_com_cl_slack_opencv_JNI_rotate(JNIEnv *env, jclass type, jlong img, jint degree) {
+
+    rotate90(*(Mat*) img);
+
+}
+
 }

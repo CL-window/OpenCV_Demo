@@ -60,8 +60,6 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
     public static final int RGBA = 1;
     public static final int GRAY = 2;
 
-    protected boolean mPortrait = true;
-
     public CameraBridgeViewBase(Context context, int cameraId) {
         super(context);
         mCameraIndex = cameraId;
@@ -419,8 +417,8 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
             Canvas canvas = getHolder().lockCanvas();
             if (canvas != null) {
                 canvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR);
-                Log.d(TAG, "draw value scale:"+ mScale +"W: " + canvas.getWidth() + " " + mCacheBitmap.getWidth() +
-                        " H: " + canvas.getHeight() + " " + mCacheBitmap.getHeight());
+//                Log.d(TAG, "draw value scale:"+ mScale +"W: " + canvas.getWidth() + " " + mCacheBitmap.getWidth() +
+//                        " H: " + canvas.getHeight() + " " + mCacheBitmap.getHeight());
 
                 float scale = 1;
                 if (mScale != 0) {
@@ -432,13 +430,16 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
                 int w;
                 int h;
 
-                if(mPortrait) {
-                    w = mCacheBitmap.getHeight();
-                    h = mCacheBitmap.getWidth();
-                } else {
-                    w = mCacheBitmap.getWidth();
-                    h = mCacheBitmap.getHeight();
-                }
+                w = mCacheBitmap.getWidth();
+                h = mCacheBitmap.getHeight();
+
+//                if(mPortrait) {
+//                    w = mCacheBitmap.getHeight();
+//                    h = mCacheBitmap.getWidth();
+//                } else {
+//                    w = mCacheBitmap.getWidth();
+//                    h = mCacheBitmap.getHeight();
+//                }
 
                 int testXY = 600;
                 int testStartXY = 100;
@@ -447,13 +448,16 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
                         (int)((canvas.getWidth() - scale*w) / 2 + scale*w),
                         (int)((canvas.getHeight() - scale*h) / 2 + scale*h));
                 canvas.drawBitmap(mCacheBitmap, new Rect(0,0,mCacheBitmap.getWidth(), mCacheBitmap.getHeight()),
-                        new Rect(testStartXY,testStartXY,testXY,testXY), null);
+//                        new Rect(testStartXY,testStartXY,testXY,testXY)
+                        new Rect(0,0,canvas.getWidth(),canvas.getHeight()) // 全屏显示
+                        , null);
 
-                mPaint.setAntiAlias(true);
-                mPaint.setColor(Color.RED);
-                mPaint.setStrokeWidth(5);
-                mPaint.setStyle(Paint.Style.STROKE);
-                canvas.drawRect(testStartXY, testStartXY, testXY, testXY ,mPaint);
+//                mPaint.setAntiAlias(true);
+//                mPaint.setColor(Color.RED);
+//                mPaint.setStrokeWidth(5);
+//                mPaint.setStyle(Paint.Style.STROKE);
+//                canvas.drawRect(testStartXY, testStartXY, testXY, testXY ,mPaint);
+
                 if (mFpsMeter != null) {
                     mFpsMeter.measure();
                     mFpsMeter.draw(canvas, 20, 30);

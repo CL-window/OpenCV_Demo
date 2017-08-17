@@ -200,6 +200,7 @@ public class FaceDetectionActivity extends AppCompatActivity implements CvCamera
         mOpenCvCameraView = (JavaCameraView) findViewById(R.id.fd_activity_surface_view);
         mOpenCvCameraView.setVisibility(CameraBridgeViewBase.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
+        mOpenCvCameraView.updateOritation(false);
 
         VerticalSeekBar seekBar = (VerticalSeekBar) findViewById(R.id.vertical_seekbar);
         seekBar.setMax(5);
