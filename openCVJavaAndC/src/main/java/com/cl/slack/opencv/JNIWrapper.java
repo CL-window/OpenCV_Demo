@@ -1,5 +1,7 @@
 package com.cl.slack.opencv;
 
+import org.opencv.core.Mat;
+
 /**
  * Created by slack
  * on 17/8/11 下午4:06
@@ -37,5 +39,15 @@ public class JNIWrapper {
     }
     public static void nativeDetect(long thiz, long inputImage, long faces){
         JNI.nativeDetect(thiz, inputImage, faces);
+    }
+
+
+    /**
+     * 对比两个人脸 相似度
+     * @param face1 face Mat
+     * @param face2
+     */
+    public static double nativeFaceRecognition(long thiz, Mat face1, Mat face2) {
+        return JNI.nativeFaceRecognition(thiz, face1.getNativeObjAddr(), face2.getNativeObjAddr());
     }
 }

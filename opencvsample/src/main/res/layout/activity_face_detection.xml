@@ -15,6 +15,13 @@
         android:layout_marginBottom="40dp"
         android:id="@+id/vertical_seekbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="切换前后"
+        android:onClick="switchCamera"/>
 
 </FrameLayout>

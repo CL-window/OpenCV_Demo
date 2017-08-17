@@ -2,7 +2,9 @@ package org.opencv.android;
 
 import java.util.List;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -10,11 +12,14 @@ import android.hardware.Camera.PreviewCallback;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Surface;
 import android.view.ViewGroup.LayoutParams;
 
 import org.opencv.BuildConfig;
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
@@ -43,6 +48,8 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
     private SurfaceTexture mSurfaceTexture;
     private int mPreviewFormat = ImageFormat.NV21;
 
+    private int oritation;
+
     public static class JavaCameraSizeAccessor implements ListItemAccessor {
 
         @Override
@@ -69,6 +76,7 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
     protected boolean initializeCamera(int width, int height) {
         Log.d(TAG, "Initialize java camera");
         boolean result = true;
+        int cameraId = 0;
         synchronized (this) {
             mCamera = null;
 
@@ -83,27 +91,26 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
 
                 if(mCamera == null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
                     boolean connected = false;
-                    for (int camIdx = 0; camIdx < Camera.getNumberOfCameras(); ++camIdx) {
-                        Log.d(TAG, "Trying to open camera with new open(" + Integer.valueOf(camIdx) + ")");
+                    for (cameraId = 0; cameraId < Camera.getNumberOfCameras(); ++cameraId) {
+                        Log.d(TAG, "Trying to open camera with new open(" + Integer.valueOf(cameraId) + ")");
                         try {
-                            mCamera = Camera.open(camIdx);
+                            mCamera = Camera.open(cameraId);
                             connected = true;
                         } catch (RuntimeException e) {
-                            Log.e(TAG, "Camera #" + camIdx + "failed to open: " + e.getLocalizedMessage());
+                            Log.e(TAG, "Camera #" + cameraId + "failed to open: " + e.getLocalizedMessage());
                         }
                         if (connected) break;
                     }
                 }
             } else {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-                    int localCameraIndex = mCameraIndex;
                     if (mCameraIndex == CAMERA_ID_BACK) {
                         Log.i(TAG, "Trying to open back camera");
                         Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
                         for (int camIdx = 0; camIdx < Camera.getNumberOfCameras(); ++camIdx) {
                             Camera.getCameraInfo( camIdx, cameraInfo );
                             if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
-                                localCameraIndex = camIdx;
+                                cameraId = camIdx;
                                 break;
                             }
                         }
@@ -113,21 +120,21 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
                         for (int camIdx = 0; camIdx < Camera.getNumberOfCameras(); ++camIdx) {
                             Camera.getCameraInfo( camIdx, cameraInfo );
                             if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-                                localCameraIndex = camIdx;
+                                cameraId = camIdx;
                                 break;
                             }
                         }
                     }
-                    if (localCameraIndex == CAMERA_ID_BACK) {
+                    if (cameraId == CAMERA_ID_BACK) {
                         Log.e(TAG, "Back camera not found!");
-                    } else if (localCameraIndex == CAMERA_ID_FRONT) {
+                    } else if (cameraId == CAMERA_ID_FRONT) {
                         Log.e(TAG, "Front camera not found!");
                     } else {
-                        Log.d(TAG, "Trying to open camera with new open(" + Integer.valueOf(localCameraIndex) + ")");
+                        Log.d(TAG, "Trying to open camera with new open(" + cameraId + ")");
                         try {
-                            mCamera = Camera.open(localCameraIndex);
+                            mCamera = Camera.open(cameraId);
                         } catch (RuntimeException e) {
-                            Log.e(TAG, "Camera #" + localCameraIndex + "failed to open: " + e.getLocalizedMessage());
+                            Log.e(TAG, "Camera #" + cameraId + "failed to open: " + e.getLocalizedMessage());
                         }
                     }
                 }
@@ -143,8 +150,27 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
                 List<android.hardware.Camera.Size> sizes = params.getSupportedPreviewSizes();
 
                 if (sizes != null) {
+                    int rotation = ((Activity) getContext()).getWindowManager().getDefaultDisplay().getRotation();
+                    int degrees = 0;
+                    switch (rotation) {
+                        case Surface.ROTATION_0: degrees = 0; break;
+                        case Surface.ROTATION_90: degrees = 90; break;
+                        case Surface.ROTATION_180: degrees = 180; break;
+                        case Surface.ROTATION_270: degrees = 270; break;
+                    }
+                    Camera.CameraInfo info = new Camera.CameraInfo();
+                    Camera.getCameraInfo( cameraId, info );
+
+                    if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                        oritation = (info.orientation + degrees) % 360;
+                        oritation = (360 - oritation) % 360;  // compensate the mirror
+                    } else {  // back-facing
+                        oritation = (info.orientation - degrees + 360) % 360;
+                    }
+
                     /* Select the size that fits surface considering maximum size allowed */
-                    Size frameSize = calculateCameraFrameSize(sizes, new JavaCameraSizeAccessor(), width, height);
+                    // 竖屏 height, width   横屏 width, height
+                    Size frameSize = calculateCameraFrameSize(sizes, new JavaCameraSizeAccessor(), height, width);
 
                     /* Image format NV21 causes issues in the Android emulators */
                     if (Build.FINGERPRINT.startsWith("generic")
@@ -180,10 +206,15 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
                     mFrameHeight = params.getPreviewSize().height;
 
                     if ((getLayoutParams().width == LayoutParams.MATCH_PARENT) && (getLayoutParams().height == LayoutParams.MATCH_PARENT))
-                        mScale = Math.min(((float)height)/mFrameHeight, ((float)width)/mFrameWidth);
+                        if(mPortrait) {
+                            mScale = Math.min(((float) height) / mFrameWidth, ((float) width) / mFrameHeight);
+                        } else {
+                            mScale = Math.min(((float) height) / mFrameHeight, ((float) width) / mFrameWidth);
+                        }
                     else
                         mScale = 0;
 
+                    Log.d(TAG, "preview value: " + mScale + " w :" + width + " " + + mFrameWidth + " h:" + height + " " + mFrameHeight);
                     if (mFpsMeter != null) {
                         mFpsMeter.setResolution(mFrameWidth, mFrameHeight);
                     }
@@ -246,10 +277,24 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
         }
     }
 
+    public void switchCamera() {
+       releaseCamera();
+        if(mCameraIndex == CAMERA_ID_BACK) {
+            mCameraIndex = CAMERA_ID_FRONT;
+        } else {
+            mCameraIndex = CAMERA_ID_BACK;
+        }
+        initializeCamera(mWidth, mHeight);
+    }
+
     private boolean mCameraFrameReady = false;
 
+    int mWidth, mHeight;
     @Override
     protected boolean connectCamera(int width, int height) {
+
+        mWidth = width;
+        mHeight = height;
 
         /* 1. We need to instantiate camera
          * 2. We need to start thread which will be getting frames
@@ -308,6 +353,33 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
         }
         if (mCamera != null)
             mCamera.addCallbackBuffer(mBuffer);
+    }
+
+    // TODO ： 摄像头开一会儿，异常崩溃，目前没有找到原因...
+    @Override
+    protected Mat rotateMat(Mat src) {
+        if(mCameraIndex == CAMERA_ID_FRONT) {
+            // 竖屏需要选择 rotate
+            Mat rotateMat = Imgproc.getRotationMatrix2D(new Point(src.rows() / 2, src.cols() / 2), oritation, 1);
+            Imgproc.warpAffine(src, src, rotateMat, src.size());
+
+            // 左右镜像
+            /**
+             * flip(Mat src, //输入矩阵
+             *      Mat dst, //翻转后矩阵，类型与src一致
+             *      int flipCode //翻转模式，flipCode==0垂直翻转（沿X轴翻转），flipCode>0水平翻转（沿Y轴翻转），
+             *                  flipCode<0水平垂直翻转（先沿X轴翻转，再沿Y轴翻转，等价于旋转180°）
+             *      )
+             */
+            Core.flip(src, src, 1);
+            return src;
+        } else {
+            // 后置
+            Mat rotateMat = Imgproc.getRotationMatrix2D(new Point(src.rows() / 2, src.cols() / 2), -oritation, 1);
+            Imgproc.warpAffine(src, src, rotateMat, src.size());
+
+            return super.rotateMat(src);
+        }
     }
 
     private class JavaCameraFrame implements CvCameraViewFrame {

@@ -5,7 +5,9 @@ import java.util.List;
 import org.opencv.BuildConfig;
 import org.opencv.R;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
 import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -14,6 +16,8 @@ import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -55,6 +59,8 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
     public static final int CAMERA_ID_FRONT = 98;
     public static final int RGBA = 1;
     public static final int GRAY = 2;
+
+    protected boolean mPortrait = true;
 
     public CameraBridgeViewBase(Context context, int cameraId) {
         super(context);
@@ -385,14 +391,17 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
      * then displayed on the screen.
      * @param frame - the current frame to be delivered
      */
+    private Paint mPaint = new Paint();
     protected void deliverAndDrawFrame(CvCameraViewFrame frame) {
-        Mat modified;
+        Mat src;
 
         if (mListener != null) {
-            modified = mListener.onCameraFrame(frame);
+            src = mListener.onCameraFrame(frame);
         } else {
-            modified = frame.rgba();
+            src = frame.rgba();
         }
+
+        Mat modified = rotateMat(src);
 
         boolean bmpValid = true;
         if (modified != null) {
@@ -410,23 +419,41 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
             Canvas canvas = getHolder().lockCanvas();
             if (canvas != null) {
                 canvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR);
-                if (BuildConfig.DEBUG)
-                    Log.d(TAG, "mStretch value: " + mScale);
+                Log.d(TAG, "draw value scale:"+ mScale +"W: " + canvas.getWidth() + " " + mCacheBitmap.getWidth() +
+                        " H: " + canvas.getHeight() + " " + mCacheBitmap.getHeight());
 
+                float scale = 1;
                 if (mScale != 0) {
-                    canvas.drawBitmap(mCacheBitmap, new Rect(0,0,mCacheBitmap.getWidth(), mCacheBitmap.getHeight()),
-                         new Rect((int)((canvas.getWidth() - mScale*mCacheBitmap.getWidth()) / 2),
-                         (int)((canvas.getHeight() - mScale*mCacheBitmap.getHeight()) / 2),
-                         (int)((canvas.getWidth() - mScale*mCacheBitmap.getWidth()) / 2 + mScale*mCacheBitmap.getWidth()),
-                         (int)((canvas.getHeight() - mScale*mCacheBitmap.getHeight()) / 2 + mScale*mCacheBitmap.getHeight())), null);
+                    scale = mScale;
                 } else {
-                     canvas.drawBitmap(mCacheBitmap, new Rect(0,0,mCacheBitmap.getWidth(), mCacheBitmap.getHeight()),
-                         new Rect((canvas.getWidth() - mCacheBitmap.getWidth()) / 2,
-                         (canvas.getHeight() - mCacheBitmap.getHeight()) / 2,
-                         (canvas.getWidth() - mCacheBitmap.getWidth()) / 2 + mCacheBitmap.getWidth(),
-                         (canvas.getHeight() - mCacheBitmap.getHeight()) / 2 + mCacheBitmap.getHeight()), null);
+                    scale = 1;
                 }
 
+                int w;
+                int h;
+
+                if(mPortrait) {
+                    w = mCacheBitmap.getHeight();
+                    h = mCacheBitmap.getWidth();
+                } else {
+                    w = mCacheBitmap.getWidth();
+                    h = mCacheBitmap.getHeight();
+                }
+
+                int testXY = 600;
+                int testStartXY = 100;
+                Rect dest = new Rect((int)((canvas.getWidth() - scale*w) / 2),
+                        (int)((canvas.getHeight() - scale*h) / 2),
+                        (int)((canvas.getWidth() - scale*w) / 2 + scale*w),
+                        (int)((canvas.getHeight() - scale*h) / 2 + scale*h));
+                canvas.drawBitmap(mCacheBitmap, new Rect(0,0,mCacheBitmap.getWidth(), mCacheBitmap.getHeight()),
+                        new Rect(testStartXY,testStartXY,testXY,testXY), null);
+
+                mPaint.setAntiAlias(true);
+                mPaint.setColor(Color.RED);
+                mPaint.setStrokeWidth(5);
+                mPaint.setStyle(Paint.Style.STROKE);
+                canvas.drawRect(testStartXY, testStartXY, testXY, testXY ,mPaint);
                 if (mFpsMeter != null) {
                     mFpsMeter.measure();
                     mFpsMeter.draw(canvas, 20, 30);
@@ -434,6 +461,10 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
                 getHolder().unlockCanvasAndPost(canvas);
             }
         }
+    }
+
+    protected Mat rotateMat(Mat src) {
+        return src;
     }
 
     /**

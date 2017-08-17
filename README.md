@@ -109,9 +109,33 @@ android {
 opencvSample/facedetect/FaceDetectionActivity.java
 1. onResume 里加载OpenCV的库，回调里面加载人脸识别库
 1. lbpcascade_frontalface.xml 这个文件是官方提供的人脸检测的LBP分类器，检测到人脸画一个方形框
-1. 在 onCameraFrame 里拿到每一帧Camera Preview 的数据，进行人脸识别
-1. 这位小哥的[人脸眼睛识别](http://romanhosek.cz/android-eye-detection-and-tracking-with-opencv/) 感觉识别的效果，模拟来说够了，但是实用就不行了
-1. 
+1. 在 onCameraFrame 里拿到每一帧Camera Preview 的数据，进行人脸检测,
+1. 总结起来就是 OpenCV有一个自己的org.opencv.android.JavaCameraView自定义控件，它循环的从摄像头抓取数据，在回调方法中，我们能获取到Mat数据，然后通过调用检测当前是否有人脸，我们会获取到一个MatOfRect 是一个Rect数组，里面会有人脸数据，最后将人脸画在屏幕上
+1. 拿到人脸后，绘制人脸框使用的是 Imgproc.rectangle
+```
+/**
+             * Mat类型的图上绘制矩形
+             * rectangle(Mat img, //图像
+             *           Point pt1, //矩形的一个顶点
+             *           Point pt2, //矩形对角线上的另一个顶点
+             *           Scalar color, //线条颜色 (RGB) 或亮度（灰度图像 ）
+             *           int thickness, //组成矩形的线条的粗细程度。取负值时（如 CV_FILLED）函数绘制填充了色彩的矩形
+             *           int lineType, //线条的类型
+             *           int shift //坐标点的小数点位数
+             *           )
+             */
+```
+1. 这位小哥的[人脸眼睛检测](http://romanhosek.cz/android-eye-detection-and-tracking-with-opencv/) 感觉检测的效果，模拟来说够了，但是实用就不行了
+1. 下面是在[官方文档](http://docs.opencv.org/3.3.0/index.html)中列出的最重要的模块。C层和java层都有相应的库
+    1. core：简洁的核心模块，定义了基本的数据结构，包括稠密多维数组 Mat 和其他模块需要的基本函数。
+    1. imgproc：图像处理模块，包括线性和非线性图像滤波、几何图像转换 (缩放、仿射与透视变换、一般性基于表的重映射)、颜色空间转换、直方图等等。
+    1. video：视频分析模块，包括运动估计、背景消除、物体跟踪算法。
+    1. calib3d：包括基本的多视角几何算法、单体和立体相机的标定、对象姿态估计、双目立体匹配算法和元素的三维重建。
+    1. features2d：包含了显著特征检测算法、描述算子和算子匹配算法。
+    1. objdetect：物体检测和一些预定义的物体的检测 (如人脸、眼睛、杯子、人、汽车等)。
+    1. ml：多种机器学习算法，如 K 均值、支持向量机和神经网络。
+    1. highgui：一个简单易用的接口，提供视频捕捉、图像和视频编码等功能，还有简单的 UI 接口 
+    1. ... and so on
 
 
 

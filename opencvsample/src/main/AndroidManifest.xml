@@ -34,8 +34,9 @@
         </activity>
         <activity android:name=".MixedProcessingActivity"/>
         <activity android:name=".GrayActivity"/>
-        <activity android:name=".facedetect.FaceDetectionActivity">
-        </activity>
+        <activity android:name=".facedetect.FaceDetectionActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
     </application>
 
 </manifest>

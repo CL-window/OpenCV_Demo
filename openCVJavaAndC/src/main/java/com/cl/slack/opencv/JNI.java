@@ -25,4 +25,7 @@ public class JNI {
     public static native void nativeStop(long thiz);
     public static native void nativeSetFaceSize(long thiz, int size);
     public static native void nativeDetect(long thiz, long inputImage, long faces);
+
+    //
+    public static native double nativeFaceRecognition(long thiz, long face1, long face2);
 }

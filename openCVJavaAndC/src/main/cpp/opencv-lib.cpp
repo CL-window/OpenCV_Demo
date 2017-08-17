@@ -251,4 +251,13 @@ JNIEXPORT void JNICALL Java_com_cl_slack_opencv_JNI_nativeDetect
     LOGD("nativeDetect END");
 }
 
+
+// 参考 http://blog.csdn.net/nicebooks/article/details/8175002
+JNIEXPORT jdouble JNICALL
+Java_com_cl_slack_opencv_JNI_nativeFaceRecognition(JNIEnv *env, jclass type, jlong thiz,
+                                                   jlong face1, jlong face2) {
+
+    return faceRecognition(thiz, face1, face2);
+}
+
 }

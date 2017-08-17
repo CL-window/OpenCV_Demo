@@ -7,6 +7,7 @@ import java.io.InputStream;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
+import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
@@ -23,13 +24,14 @@ import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.Objdetect;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.SeekBar;
 
@@ -66,7 +68,7 @@ public class FaceDetectionActivity extends AppCompatActivity implements CvCamera
     private double 				   mMatch_value;
     private Mat 				   mTeplateR;
     private Mat 				   mTeplateL;
-    public  int                    mEyemethod = 1;
+    public  int                    mEyemethod = 3;
 
     private int                    mDetectorType       = JAVA_DETECTOR;
     private String[]               mDetectorName;
@@ -74,7 +76,9 @@ public class FaceDetectionActivity extends AppCompatActivity implements CvCamera
     private float                  mRelativeFaceSize   = 0.2f;
     private int                    mAbsoluteFaceSize   = 0;
 
-    private CameraBridgeViewBase   mOpenCvCameraView;
+    private JavaCameraView   mOpenCvCameraView;
+
+    private boolean mFaceDetection = false;
 
     private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -185,11 +189,15 @@ public class FaceDetectionActivity extends AppCompatActivity implements CvCamera
     public void onCreate(Bundle savedInstanceState) {
         Log.i(TAG, "called onCreate");
         super.onCreate(savedInstanceState);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        this.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(R.layout.activity_face_detection);
 
-        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.fd_activity_surface_view);
+        mOpenCvCameraView = (JavaCameraView) findViewById(R.id.fd_activity_surface_view);
         mOpenCvCameraView.setVisibility(CameraBridgeViewBase.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
 
@@ -252,6 +260,10 @@ public class FaceDetectionActivity extends AppCompatActivity implements CvCamera
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
 
+        if(!mFaceDetection) {
+            return mRgba;
+        }
+
         if (mAbsoluteFaceSize == 0) {
             int height = mGray.rows();
             if (Math.round(height * mRelativeFaceSize) > 0) {
@@ -264,6 +276,20 @@ public class FaceDetectionActivity extends AppCompatActivity implements CvCamera
 
         if (mDetectorType == JAVA_DETECTOR) {
             if (mJavaDetector != null)
+            /**
+             * detectMultiScale(
+             *                  Mat image, //输入图像
+             *                  MatOfRect objects, //检测到的Rect[]
+             *                  double scaleFactor, //缩放比例，必须大于1
+             *                  int minNeighbors, //合并窗口时最小neighbor，每个候选矩阵至少包含的附近元素个数
+             *                  int flags,  //检测标记，只对旧格式的分类器有效，与cvHaarDetectObjects的参数flags相同，默认为0，
+             *            可能的取值为CV_HAAR_DO_CANNY_PRUNING(CANNY边缘检测)、CV_HAAR_SCALE_IMAGE(缩放图像)、
+             *            CV_HAAR_FIND_BIGGEST_OBJECT(寻找最大的目标)、CV_HAAR_DO_ROUGH_SEARCH(做粗略搜索)；
+             *            如果寻找最大的目标就不能缩放图像，也不能CANNY边缘检测
+             *                  Size minSize, //最小检测目标
+             *                  Size maxSize //最大检测目标
+             *                  )
+             */
                 mJavaDetector.detectMultiScale(mGray, faces, 1.1, 2, 2, // TODO: objdetect.CV_HAAR_SCALE_IMAGE
                         new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());
 
@@ -310,9 +336,20 @@ public class FaceDetectionActivity extends AppCompatActivity implements CvCamera
         }
 
         Rect[] facesArray = faces.toArray();
-        for (int i = 0; i < facesArray.length; i++)
+        for (int i = 0; i < facesArray.length; i++) {
+            /**
+             * Mat类型的图上绘制矩形
+             * rectangle(Mat img, //图像
+             *           Point pt1, //矩形的一个顶点
+             *           Point pt2, //矩形对角线上的另一个顶点
+             *           Scalar color, //线条颜色 (RGB) 或亮度（灰度图像 ）
+             *           int thickness, //组成矩形的线条的粗细程度。取负值时（如 CV_FILLED）函数绘制填充了色彩的矩形
+             *           int lineType, //线条的类型
+             *           int shift //坐标点的小数点位数
+             *           )
+             */
             Imgproc.rectangle(mRgba, facesArray[i].tl(), facesArray[i].br(), FACE_RECT_COLOR, 3);
-
+        }
         return mRgba;
     }
 
@@ -411,35 +448,6 @@ public class FaceDetectionActivity extends AppCompatActivity implements CvCamera
         return template;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        Log.i(TAG, "called onCreateOptionsMenu");
-        mItemFace50 = menu.add("Face size 50%");
-        mItemFace40 = menu.add("Face size 40%");
-        mItemFace30 = menu.add("Face size 30%");
-        mItemFace20 = menu.add("Face size 20%");
-        mItemType   = menu.add(mDetectorName[mDetectorType]);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Log.i(TAG, "called onOptionsItemSelected; selected item: " + item);
-        if (item == mItemFace50)
-            setMinFaceSize(0.5f);
-        else if (item == mItemFace40)
-            setMinFaceSize(0.4f);
-        else if (item == mItemFace30)
-            setMinFaceSize(0.3f);
-        else if (item == mItemFace20)
-            setMinFaceSize(0.2f);
-        else if (item == mItemType) {
-            int tmpDetectorType = (mDetectorType + 1) % mDetectorName.length;
-            item.setTitle(mDetectorName[tmpDetectorType]);
-            setDetectorType(tmpDetectorType);
-        }
-        return true;
-    }
 
     private void setMinFaceSize(float faceSize) {
         mRelativeFaceSize = faceSize;
@@ -458,5 +466,9 @@ public class FaceDetectionActivity extends AppCompatActivity implements CvCamera
                 mNativeDetector.stop();
             }
         }
+    }
+
+    public void switchCamera(View view) {
+        mOpenCvCameraView.switchCamera();
     }
 }
