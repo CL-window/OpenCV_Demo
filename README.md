@@ -1,5 +1,5 @@
 # OpenCV learn
-![人脸检测](OpenCV_Demo/pic/pic1.png)
+![人脸检测](pic/pic1.png)
 
 环境：android studio 配置好NDK
 * download [source from offical](http://opencv.org/releases.html) 下载的是3.3.0
