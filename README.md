@@ -1,5 +1,5 @@
 # OpenCV learn
-![人脸检测](https://github.com/CL-window/OpenCV_Dem/pic/pic1.png =100x100)
+![人脸检测](https://github.com/CL-window/OpenCV_Demo/tree/master/pic/pic1.png =100x100)
 环境：android studio 配置好NDK
 * download [source from offical](http://opencv.org/releases.html) 下载的是3.3.0
 * 运行sample需要先安装OpenCVManager，这个让人无语，不过从开发者的角度看，他们是 把OpenCV做成一个系统支持框架，这样需要先安装就很好理解了
