@@ -5,11 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.JavaCameraView;
-import org.opencv.android.LoaderCallbackInterface;
-import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -28,13 +25,14 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.SeekBar;
 
+import com.cl.slack.opencv.facedetect.FaceDetectHelper;
+import com.cl.slack.opencv.facedetect.FaceDetectHelperImpl;
 import com.cl.slack.opencvSample.R;
 
 import static org.opencv.imgproc.Imgproc.*;
@@ -80,29 +78,11 @@ public class FaceDetectionActivity extends AppCompatActivity implements CvCamera
 
     private boolean mFaceDetection = false;
 
-    private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
+    private FaceDetectHelperImpl.LoaderCallback  mLoaderCallback = new FaceDetectHelperImpl.LoaderCallback() {
         @Override
-        public void onManagerConnected(int status) {
-            switch (status) {
-                case LoaderCallbackInterface.SUCCESS:
-                {
-                    Log.i(TAG, "OpenCV loaded successfully");
-
-                    try {
-
-                       loadDecetorFormXml();
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "Failed to load cascade. Exception thrown: " + e);
-                    }
-
-                    mOpenCvCameraView.enableView();
-                } break;
-                default:
-                {
-                    super.onManagerConnected(status);
-                } break;
+        public void onResult(boolean success) {
+            if(success) {
+                mOpenCvCameraView.enableView();
             }
         }
     };
@@ -231,13 +211,7 @@ public class FaceDetectionActivity extends AppCompatActivity implements CvCamera
     public void onResume()
     {
         super.onResume();
-        if (!OpenCVLoader.initDebug()) {
-            Log.d(TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
-            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, this, mLoaderCallback);
-        } else {
-            Log.d(TAG, "OpenCV library found inside package. Using it!");
-            mLoaderCallback.onManagerConnected(LoaderCallbackInterface.SUCCESS);
-        }
+        FaceDetectHelper.helper.initFaceDetect(this, mLoaderCallback);
     }
 
     public void onDestroy() {
@@ -257,101 +231,102 @@ public class FaceDetectionActivity extends AppCompatActivity implements CvCamera
 
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
 
-        mRgba = inputFrame.rgba();
-        mGray = inputFrame.gray();
-
-        if(!mFaceDetection) {
-            return mRgba;
-        }
-
-        if (mAbsoluteFaceSize == 0) {
-            int height = mGray.rows();
-            if (Math.round(height * mRelativeFaceSize) > 0) {
-                mAbsoluteFaceSize = Math.round(height * mRelativeFaceSize);
-            }
-            mNativeDetector.setMinFaceSize(mAbsoluteFaceSize);
-        }
-
-        MatOfRect faces = new MatOfRect();
-
-        if (mDetectorType == JAVA_DETECTOR) {
-            if (mJavaDetector != null)
-            /**
-             * detectMultiScale(
-             *                  Mat image, //输入图像
-             *                  MatOfRect objects, //检测到的Rect[]
-             *                  double scaleFactor, //缩放比例，必须大于1
-             *                  int minNeighbors, //合并窗口时最小neighbor，每个候选矩阵至少包含的附近元素个数
-             *                  int flags,  //检测标记，只对旧格式的分类器有效，与cvHaarDetectObjects的参数flags相同，默认为0，
-             *            可能的取值为CV_HAAR_DO_CANNY_PRUNING(CANNY边缘检测)、CV_HAAR_SCALE_IMAGE(缩放图像)、
-             *            CV_HAAR_FIND_BIGGEST_OBJECT(寻找最大的目标)、CV_HAAR_DO_ROUGH_SEARCH(做粗略搜索)；
-             *            如果寻找最大的目标就不能缩放图像，也不能CANNY边缘检测
-             *                  Size minSize, //最小检测目标
-             *                  Size maxSize //最大检测目标
-             *                  )
-             */
-                mJavaDetector.detectMultiScale(mGray, faces, 1.1, 2, 2, // TODO: objdetect.CV_HAAR_SCALE_IMAGE
-                        new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());
-
-            if (mZoomWindow == null)
-                createAuxiliaryMats();
-
-
-            Rect[] facesArray = faces.toArray();
-
-            for (int i = 0; i < facesArray.length; i++){
-                Rect r = facesArray[i];
-                Imgproc.rectangle(mGray, r.tl(), r.br(), new Scalar(0, 255, 0, 255), 3);
-                Imgproc.rectangle(mRgba, r.tl(), r.br(), new Scalar(0, 255, 0, 255), 3);
-
-                mEyearea = new Rect(r.x +r.width/8,(int)(r.y + (r.height/4.5)),r.width - 2*r.width/8,(int)( r.height/3.0));
-                Imgproc.rectangle(mRgba,mEyearea.tl(),mEyearea.br() , new Scalar(255,0, 0, 255), 2);
-                Rect eyearea_right = new Rect(r.x +r.width/16,(int)(r.y + (r.height/4.5)),(r.width - 2*r.width/16)/2,(int)( r.height/3.0));
-                Rect eyearea_left = new Rect(r.x +r.width/16 +(r.width - 2*r.width/16)/2,(int)(r.y + (r.height/4.5)),(r.width - 2*r.width/16)/2,(int)( r.height/3.0));
-                Imgproc.rectangle(mRgba,eyearea_left.tl(),eyearea_left.br() , new Scalar(255,0, 0, 255), 2);
-                Imgproc.rectangle(mRgba,eyearea_right.tl(),eyearea_right.br() , new Scalar(255, 0, 0, 255), 2);
-
-                if(mLearn_frames<5){
-                    mTeplateR = getTemplate(mCascadeER,eyearea_right,24);
-                    mTeplateL = getTemplate(mCascadeEL,eyearea_left,24);
-                    mLearn_frames++;
-                }else{
-
-                    mMatch_value = match_eye(eyearea_right,mTeplateR,mEyemethod);
-                    mMatch_value = match_eye(eyearea_left,mTeplateL,mEyemethod);
-
-                }
-                Imgproc.resize(mRgba.submat(eyearea_left), mZoomWindow2, mZoomWindow2.size());
-                Imgproc.resize(mRgba.submat(eyearea_right), mZoomWindow, mZoomWindow.size());
-
-            }
-
-        }
-        else if (mDetectorType == NATIVE_DETECTOR) {
-            if (mNativeDetector != null)
-                mNativeDetector.detect(mGray, faces);
-        }
-        else {
-            Log.e(TAG, "Detection method is not selected!");
-        }
-
-        Rect[] facesArray = faces.toArray();
-        Log.e(TAG, "recognition size: " + facesArray.length);
-        for (int i = 0; i < facesArray.length; i++) {
-            /**
-             * Mat类型的图上绘制矩形
-             * rectangle(Mat img, //图像
-             *           Point pt1, //矩形的一个顶点
-             *           Point pt2, //矩形对角线上的另一个顶点
-             *           Scalar color, //线条颜色 (RGB) 或亮度（灰度图像 ）
-             *           int thickness, //组成矩形的线条的粗细程度。取负值时（如 CV_FILLED）函数绘制填充了色彩的矩形
-             *           int lineType, //线条的类型
-             *           int shift //坐标点的小数点位数
-             *           )
-             */
-            Imgproc.rectangle(mRgba, facesArray[i].tl(), facesArray[i].br(), FACE_RECT_COLOR, 3);
-        }
-        return mRgba;
+        return FaceDetectHelper.helper.detectFace(inputFrame);
+//        mRgba = inputFrame.rgba();
+//        mGray = inputFrame.gray();
+//
+//        if(!mFaceDetection) {
+//            return mRgba;
+//        }
+//
+//        if (mAbsoluteFaceSize == 0) {
+//            int height = mGray.rows();
+//            if (Math.round(height * mRelativeFaceSize) > 0) {
+//                mAbsoluteFaceSize = Math.round(height * mRelativeFaceSize);
+//            }
+//            mNativeDetector.setMinFaceSize(mAbsoluteFaceSize);
+//        }
+//
+//        MatOfRect faces = new MatOfRect();
+//
+//        if (mDetectorType == JAVA_DETECTOR) {
+//            if (mJavaDetector != null)
+//            /**
+//             * detectMultiScale(
+//             *                  Mat image, //输入图像,一般为灰度图
+//             *                  MatOfRect objects, //检测到的Rect[],存放所有检测出的人脸，每个人脸是一个矩形
+//             *                  double scaleFactor, //缩放比例,对图片进行缩放，默认为1.1
+//             *                  int minNeighbors, //合并窗口时最小neighbor，每个候选矩阵至少包含的附近元素个数，默认为3
+//             *                  int flags,  //检测标记，只对旧格式的分类器有效，与cvHaarDetectObjects的参数flags相同，在3.0版本中没用处, 默认为0，
+//             *            可能的取值为CV_HAAR_DO_CANNY_PRUNING(CANNY边缘检测)、CV_HAAR_SCALE_IMAGE(缩放图像)、
+//             *            CV_HAAR_FIND_BIGGEST_OBJECT(寻找最大的目标)、CV_HAAR_DO_ROUGH_SEARCH(做粗略搜索)；
+//             *            如果寻找最大的目标就不能缩放图像，也不能CANNY边缘检测
+//             *                  Size minSize, //检测出的人脸最小尺寸
+//             *                  Size maxSize //检测出的人脸最大尺寸
+//             *                  )
+//             */
+//                mJavaDetector.detectMultiScale(mGray, faces, 1.1, 2, 2, // TODO: objdetect.CV_HAAR_SCALE_IMAGE
+//                        new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());
+//
+//            if (mZoomWindow == null)
+//                createAuxiliaryMats();
+//
+//
+//            Rect[] facesArray = faces.toArray();
+//
+//            for (int i = 0; i < facesArray.length; i++){
+//                Rect r = facesArray[i];
+//                Imgproc.rectangle(mGray, r.tl(), r.br(), new Scalar(0, 255, 0, 255), 3);
+//                Imgproc.rectangle(mRgba, r.tl(), r.br(), new Scalar(0, 255, 0, 255), 3);
+//
+//                mEyearea = new Rect(r.x +r.width/8,(int)(r.y + (r.height/4.5)),r.width - 2*r.width/8,(int)( r.height/3.0));
+//                Imgproc.rectangle(mRgba,mEyearea.tl(),mEyearea.br() , new Scalar(255,0, 0, 255), 2);
+//                Rect eyearea_right = new Rect(r.x +r.width/16,(int)(r.y + (r.height/4.5)),(r.width - 2*r.width/16)/2,(int)( r.height/3.0));
+//                Rect eyearea_left = new Rect(r.x +r.width/16 +(r.width - 2*r.width/16)/2,(int)(r.y + (r.height/4.5)),(r.width - 2*r.width/16)/2,(int)( r.height/3.0));
+//                Imgproc.rectangle(mRgba,eyearea_left.tl(),eyearea_left.br() , new Scalar(255,0, 0, 255), 2);
+//                Imgproc.rectangle(mRgba,eyearea_right.tl(),eyearea_right.br() , new Scalar(255, 0, 0, 255), 2);
+//
+//                if(mLearn_frames<5){
+//                    mTeplateR = getTemplate(mCascadeER,eyearea_right,24);
+//                    mTeplateL = getTemplate(mCascadeEL,eyearea_left,24);
+//                    mLearn_frames++;
+//                }else{
+//
+//                    mMatch_value = match_eye(eyearea_right,mTeplateR,mEyemethod);
+//                    mMatch_value = match_eye(eyearea_left,mTeplateL,mEyemethod);
+//
+//                }
+//                Imgproc.resize(mRgba.submat(eyearea_left), mZoomWindow2, mZoomWindow2.size());
+//                Imgproc.resize(mRgba.submat(eyearea_right), mZoomWindow, mZoomWindow.size());
+//
+//            }
+//
+//        }
+//        else if (mDetectorType == NATIVE_DETECTOR) {
+//            if (mNativeDetector != null)
+//                mNativeDetector.detect(mGray, faces);
+//        }
+//        else {
+//            Log.e(TAG, "Detection method is not selected!");
+//        }
+//
+//        Rect[] facesArray = faces.toArray();
+//        Log.e(TAG, "recognition size: " + facesArray.length);
+//        for (int i = 0; i < facesArray.length; i++) {
+//            /**
+//             * Mat类型的图上绘制矩形
+//             * rectangle(Mat img, //图像
+//             *           Point pt1, //矩形的一个顶点
+//             *           Point pt2, //矩形对角线上的另一个顶点
+//             *           Scalar color, //线条颜色 (RGB) 或亮度（灰度图像 ）
+//             *           int thickness, //组成矩形的线条的粗细程度。取负值时（如 CV_FILLED）函数绘制填充了色彩的矩形
+//             *           int lineType, //线条的类型
+//             *           int shift //坐标点的小数点位数
+//             *           )
+//             */
+//            Imgproc.rectangle(mRgba, facesArray[i].tl(), facesArray[i].br(), FACE_RECT_COLOR, 3);
+//        }
+//        return mRgba;
     }
 
     private void createAuxiliaryMats() {
@@ -383,19 +358,19 @@ public class FaceDetectionActivity extends AppCompatActivity implements CvCamera
                 Imgproc.matchTemplate(mROI, mTemplate, mResult, TM_SQDIFF) ;
                 break;
             case TM_SQDIFF_NORMED:
-                Imgproc.matchTemplate(mROI, mTemplate, mResult, Imgproc.TM_SQDIFF_NORMED) ;
+                Imgproc.matchTemplate(mROI, mTemplate, mResult, TM_SQDIFF_NORMED) ;
                 break;
             case TM_CCORR:
-                Imgproc.matchTemplate(mROI, mTemplate, mResult, Imgproc.TM_CCORR) ;
+                Imgproc.matchTemplate(mROI, mTemplate, mResult, TM_CCORR) ;
                 break;
             case TM_CCORR_NORMED:
-                Imgproc.matchTemplate(mROI, mTemplate, mResult, Imgproc.TM_CCORR_NORMED) ;
+                Imgproc.matchTemplate(mROI, mTemplate, mResult, TM_CCORR_NORMED) ;
                 break;
             case TM_CCOEFF:
-                Imgproc.matchTemplate(mROI, mTemplate, mResult, Imgproc.TM_CCOEFF) ;
+                Imgproc.matchTemplate(mROI, mTemplate, mResult, TM_CCOEFF) ;
                 break;
             case TM_CCOEFF_NORMED:
-                Imgproc.matchTemplate(mROI, mTemplate, mResult, Imgproc.TM_CCOEFF_NORMED) ;
+                Imgproc.matchTemplate(mROI, mTemplate, mResult, TM_CCOEFF_NORMED) ;
                 break;
 
         }

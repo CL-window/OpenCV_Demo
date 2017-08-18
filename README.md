@@ -108,24 +108,45 @@ android {
 ## Face Detection
 opencvSample/facedetect/FaceDetectionActivity.java
 1. onResume 里加载OpenCV的库，回调里面加载人脸识别库
-1. lbpcascade_frontalface.xml 这个文件是官方提供的人脸检测的LBP分类器，检测到人脸画一个方形框
 1. 在 onCameraFrame 里拿到每一帧Camera Preview 的数据，进行人脸检测,
+1. OpenCV 人脸检测用的是harr或LBP特征，分类算法用的是adaboost算法。这种算法需要提前训练大量的图片，非常耗时，因此opencv已经训练好了，把训练结果存放在一些xml文件里面。练好的文件放在 /sdk/etc 文件夹下，有两个文件夹haarcascades和lbpcascades，前者存放的是harr特征训练出来的文件，后者存放的是lbp特征训练出来的文件,比如
+1. 人脸检测主要用到的是CascadeClassifier这个类，以及该类下的detectMultiScale函数
+    ```
+    /**
+             * detectMultiScale(
+             *                  Mat image, //输入图像,一般为灰度图
+             *                  MatOfRect objects, //检测到的Rect[],存放所有检测出的人脸，每个人脸是一个矩形
+             *                  double scaleFactor, //缩放比例,对图片进行缩放，默认为1.1
+             *                  int minNeighbors, //合并窗口时最小neighbor，每个候选矩阵至少包含的附近元素个数，默认为3
+             *                  int flags,  //检测标记，只对旧格式的分类器有效，与cvHaarDetectObjects的参数flags相同，在3.0版本中没用处, 默认为0，
+             *            可能的取值为CV_HAAR_DO_CANNY_PRUNING(CANNY边缘检测)、CV_HAAR_SCALE_IMAGE(缩放图像)、
+             *            CV_HAAR_FIND_BIGGEST_OBJECT(寻找最大的目标)、CV_HAAR_DO_ROUGH_SEARCH(做粗略搜索)；
+             *            如果寻找最大的目标就不能缩放图像，也不能CANNY边缘检测
+             *                  Size minSize, //检测出的人脸最小尺寸
+             *                  Size maxSize //检测出的人脸最大尺寸
+             *                  )
+             */
+                mJavaDetector.detectMultiScale(mGray, faces, 1.1, 2, 2, // TODO: objdetect.CV_HAAR_SCALE_IMAGE
+                        new Size(mAbsoluteFaceSize, mAbsoluteFaceSize), new Size());
+
+    ```
 1. 总结起来就是 OpenCV有一个自己的org.opencv.android.JavaCameraView自定义控件，它循环的从摄像头抓取数据，在回调方法中，我们能获取到Mat数据，然后通过调用检测当前是否有人脸，我们会获取到一个MatOfRect 是一个Rect数组，里面会有人脸数据，最后将人脸画在屏幕上
 1. 拿到人脸后，绘制人脸框使用的是 Imgproc.rectangle
     ```
-            /**
-             * Mat类型的图上绘制矩形
-             * rectangle(Mat img, //图像
-             *           Point pt1, //矩形的一个顶点
-             *           Point pt2, //矩形对角线上的另一个顶点
-             *           Scalar color, //线条颜色 (RGB) 或亮度（灰度图像 ）
-             *           int thickness, //组成矩形的线条的粗细程度。取负值时（如 CV_FILLED）函数绘制填充了色彩的矩形
-             *           int lineType, //线条的类型
-             *           int shift //坐标点的小数点位数
-             *           )
-             */
+    /**
+        * Mat类型的图上绘制矩形
+        * rectangle(Mat img, //图像
+        *           Point pt1, //矩形的一个顶点
+        *           Point pt2, //矩形对角线上的另一个顶点
+        *           Scalar color, //线条颜色 (RGB) 或亮度（灰度图像 ）
+        *           int thickness, //组成矩形的线条的粗细程度。取负值时（如 CV_FILLED）函数绘制填充了色彩的矩形
+        *           int lineType, //线条的类型
+        *           int shift //坐标点的小数点位数
+        *           )
+        */
     ```
 1. 这位小哥的[人脸眼睛检测](http://romanhosek.cz/android-eye-detection-and-tracking-with-opencv/) 感觉检测的效果，模拟来说够了，但是实用就不行了
+
 1. 下面是在[官方文档](http://docs.opencv.org/3.3.0/index.html)中列出的最重要的模块。C层和java层都有相应的库
     1. core：简洁的核心模块，定义了基本的数据结构，包括稠密多维数组 Mat 和其他模块需要的基本函数。
     1. imgproc：图像处理模块，包括线性和非线性图像滤波、几何图像转换 (缩放、仿射与透视变换、一般性基于表的重映射)、颜色空间转换、直方图等等。
@@ -168,6 +189,33 @@ opencvSample/facedetect/FaceDetectionActivity.java
         return super.rotateMat(src);
     }
     ```
+不过OpenCV的库，貌似是横屏是识别的，我改成竖屏后检测效果不好，不过横过来，人脸眼睛检测还是不错的
+
+### 识别
+Imgproc.matchTemplate
+```
+/**
+     * 可以用来做 识别
+     * 模板匹配是一种在图像中定位目标的方法
+     * 通过把输入图像在实际图像上逐像素点滑动，计算特征相似性，以此来判断当前滑块图像所在位置是目标图像的概率。
+     * 在目标特征变化不是特别快的情况下，跟踪效果还可以
+     * matchTemplate(Mat image, 搜索对象图像
+     *              Mat templ, 模板图像，小于image，并且和image有相同的数据类型
+     *              Mat result, 比较结果
+     *              int method 比较算法总共有六种
+     *              TM_SQDIFF 平方差匹配法：该方法采用平方差来进行匹配；最好的匹配值为0；匹配越差，匹配值越大。
+     *              TM_CCORR 相关匹配法：该方法采用乘法操作；数值越大表明匹配程度越好。
+     *              TM_CCOEFF 相关系数匹配法：1表示完美的匹配；-1表示最差的匹配。
+     *              TM_SQDIFF_NORMED 归一化平方差匹配法
+     *              TM_CCORR_NORMED 归一化相关匹配法
+     *              TM_CCOEFF_NORMED 归一化相关系数匹配法
+     *              )
+     */
+```
+识别的思路参考眼睛的识别
+
+1. 检测到眼睛，获得眼睛的模板 Mat 见 com.cl.slack.opencv.facedetect.FaceDetectHelperImpl#getTemplate
+1. 调用 Imgproc.matchTemplate 识别 见 com.cl.slack.opencv.facedetect.FaceDetectHelperImpl#match_eye
 
 
 
