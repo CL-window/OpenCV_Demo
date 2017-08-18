@@ -124,8 +124,8 @@ public class FaceDetectHelperImpl implements FaceDetectHelper {
             // left eye and right eye
             Rect eyearea_right = new Rect(face.x + face.width / 16, (int) (face.y + (face.height / 4.5)), (face.width - 2 * face.width / 16) / 2, (int) (face.height / 3.0));
             Rect eyearea_left = new Rect(face.x + face.width / 16 + (face.width - 2 * face.width / 16) / 2, (int) (face.y + (face.height / 4.5)), (face.width - 2 * face.width / 16) / 2, (int) (face.height / 3.0));
-//            Imgproc.rectangle(mRgba, eyearea_left.tl(), eyearea_left.br(), EYES_RECT_COLOR, 2);
-//            Imgproc.rectangle(mRgba, eyearea_right.tl(), eyearea_right.br(), EYES_RECT_COLOR, 2);
+            Imgproc.rectangle(mRgba, eyearea_left.tl(), eyearea_left.br(), EYES_RECT_COLOR, 2);
+            Imgproc.rectangle(mRgba, eyearea_right.tl(), eyearea_right.br(), EYES_RECT_COLOR, 2);
 
             if (mLearn_frames < 5) {
                 mTeplateR = getTemplate(mEyeRightDetect, eyearea_right, 24);
