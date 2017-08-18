@@ -1,4 +1,5 @@
 # OpenCV learn
+![人脸检测](https://github.com/CL-window/OpenCV_Dem/pic/pic1.png =100x100)
 环境：android studio 配置好NDK
 * download [source from offical](http://opencv.org/releases.html) 下载的是3.3.0
 * 运行sample需要先安装OpenCVManager，这个让人无语，不过从开发者的角度看，他们是 把OpenCV做成一个系统支持框架，这样需要先安装就很好理解了
@@ -217,8 +218,10 @@ Imgproc.matchTemplate
 1. 检测到眼睛，获得眼睛的模板 Mat 见 com.cl.slack.opencv.facedetect.FaceDetectHelperImpl#getTemplate
 1. 调用 Imgproc.matchTemplate 识别 见 com.cl.slack.opencv.facedetect.FaceDetectHelperImpl#match_eye
 
-
-
+TODO:
+1. 这个是横屏可以检测，竖屏是无法检测的
+1. 没有嘴巴，鼻子 眉毛，上下嘴唇的检测
+1. 检测效率略低
 
 注：可以参考的文章
 * [Android Studio 2.3利用CMAKE进行OpenCV 3.2的NDK开发](http://johnhany.net/2017/07/opencv-ndk-dev-with-cmake-on-android-studio/)               
