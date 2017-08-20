@@ -1,0 +1,90 @@
+[
+    {
+        "merged": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/res/merged/androidTest/debug/raw/haarcascade_upperbody.xml",
+        "source": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/bundles/debug/res/raw/haarcascade_upperbody.xml"
+    },
+    {
+        "merged": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/res/merged/androidTest/debug/raw/lbpcascade_frontalface_improved.xml",
+        "source": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/bundles/debug/res/raw/lbpcascade_frontalface_improved.xml"
+    },
+    {
+        "merged": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/res/merged/androidTest/debug/raw/lbpcascade_silverware.xml",
+        "source": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/bundles/debug/res/raw/lbpcascade_silverware.xml"
+    },
+    {
+        "merged": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/res/merged/androidTest/debug/raw/haarcascade_fullbody.xml",
+        "source": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/bundles/debug/res/raw/haarcascade_fullbody.xml"
+    },
+    {
+        "merged": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/res/merged/androidTest/debug/raw/haarcascade_profileface.xml",
+        "source": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/bundles/debug/res/raw/haarcascade_profileface.xml"
+    },
+    {
+        "merged": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/res/merged/androidTest/debug/raw/lbpcascade_frontalface.xml",
+        "source": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/bundles/debug/res/raw/lbpcascade_frontalface.xml"
+    },
+    {
+        "merged": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/res/merged/androidTest/debug/raw/haarcascade_eye.xml",
+        "source": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/bundles/debug/res/raw/haarcascade_eye.xml"
+    },
+    {
+        "merged": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/res/merged/androidTest/debug/raw/lbpcascade_frontalcatface.xml",
+        "source": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/bundles/debug/res/raw/lbpcascade_frontalcatface.xml"
+    },
+    {
+        "merged": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/res/merged/androidTest/debug/raw/haarcascade_licence_plate_rus_16stages.xml",
+        "source": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/bundles/debug/res/raw/haarcascade_licence_plate_rus_16stages.xml"
+    },
+    {
+        "merged": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/res/merged/androidTest/debug/raw/lbpcascade_profileface.xml",
+        "source": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/bundles/debug/res/raw/lbpcascade_profileface.xml"
+    },
+    {
+        "merged": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/res/merged/androidTest/debug/raw/haarcascade_lefteye_2splits.xml",
+        "source": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/bundles/debug/res/raw/haarcascade_lefteye_2splits.xml"
+    },
+    {
+        "merged": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/res/merged/androidTest/debug/raw/haarcascade_frontalcatface_extended.xml",
+        "source": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/bundles/debug/res/raw/haarcascade_frontalcatface_extended.xml"
+    },
+    {
+        "merged": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/res/merged/androidTest/debug/raw/haarcascade_frontalface_alt2.xml",
+        "source": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/bundles/debug/res/raw/haarcascade_frontalface_alt2.xml"
+    },
+    {
+        "merged": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/res/merged/androidTest/debug/raw/haarcascade_frontalcatface.xml",
+        "source": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/bundles/debug/res/raw/haarcascade_frontalcatface.xml"
+    },
+    {
+        "merged": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/res/merged/androidTest/debug/raw/haarcascade_eye_tree_eyeglasses.xml",
+        "source": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/bundles/debug/res/raw/haarcascade_eye_tree_eyeglasses.xml"
+    },
+    {
+        "merged": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/res/merged/androidTest/debug/raw/haarcascade_smile.xml",
+        "source": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/bundles/debug/res/raw/haarcascade_smile.xml"
+    },
+    {
+        "merged": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/res/merged/androidTest/debug/raw/haarcascade_russian_plate_number.xml",
+        "source": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/bundles/debug/res/raw/haarcascade_russian_plate_number.xml"
+    },
+    {
+        "merged": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/res/merged/androidTest/debug/raw/haarcascade_lowerbody.xml",
+        "source": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/bundles/debug/res/raw/haarcascade_lowerbody.xml"
+    },
+    {
+        "merged": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/res/merged/androidTest/debug/raw/haarcascade_righteye_2splits.xml",
+        "source": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/bundles/debug/res/raw/haarcascade_righteye_2splits.xml"
+    },
+    {
+        "merged": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/res/merged/androidTest/debug/raw/haarcascade_frontalface_alt_tree.xml",
+        "source": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/bundles/debug/res/raw/haarcascade_frontalface_alt_tree.xml"
+    },
+    {
+        "merged": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/res/merged/androidTest/debug/raw/haarcascade_frontalface_default.xml",
+        "source": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/bundles/debug/res/raw/haarcascade_frontalface_default.xml"
+    },
+    {
+        "merged": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/res/merged/androidTest/debug/raw/haarcascade_frontalface_alt.xml",
+        "source": "/Users/jf/Desktop/slack/graduating/open_cv/OpenCV/openCVJavaAndC/build/intermediates/bundles/debug/res/raw/haarcascade_frontalface_alt.xml"
+    }
+]

@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/opencvjava" />
             <option value="$PROJECT_DIR$/opencvsample" />
             <option value="$PROJECT_DIR$/permission" />
+            <option value="$PROJECT_DIR$/puzzle" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

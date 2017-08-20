@@ -124,6 +124,7 @@ public class Puzzle15Processor {
         int row = (int) Math.floor(y * GRID_SIZE / rows);
         int col = (int) Math.floor(x * GRID_SIZE / cols);
 
+        Log.e(TAG, "row:" + row + " col:" + col);
         if (row < 0 || row >= GRID_SIZE || col < 0 || col >= GRID_SIZE) {
             Log.e(TAG, "It is not expected to get touch event outside of picture");
             return;

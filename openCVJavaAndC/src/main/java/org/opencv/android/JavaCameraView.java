@@ -293,6 +293,7 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
 
         mWidth = width;
         mHeight = height;
+        mRgbaT = new Mat();
 
         /* 1. We need to instantiate camera
          * 2. We need to start thread which will be getting frames
@@ -353,7 +354,7 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
             mCamera.addCallbackBuffer(mBuffer);
     }
 
-    private Mat mRgbaT = new Mat();
+    private Mat mRgbaT;
 
     /**
      *  TODO ： 摄像头开一会儿，异常崩溃，目前没有找到原因... 目测是每次进来这里 new Mat 的缘故，

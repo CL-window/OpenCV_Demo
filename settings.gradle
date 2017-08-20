@@ -1,3 +1,3 @@
-include ':app', ':openCVC', ':opencvsample', ':opencvjava', ':permission'
+include ':app', ':openCVC', ':opencvsample', ':opencvjava', ':permission', ':puzzle'
 include ':openCVLibrary330'
 include ':openCVJavaAndC'

@@ -10,6 +10,7 @@
       <module fileurl="file://$PROJECT_DIR$/opencvjava/opencvjava.iml" filepath="$PROJECT_DIR$/opencvjava/opencvjava.iml" />
       <module fileurl="file://$PROJECT_DIR$/opencvsample/opencvsample.iml" filepath="$PROJECT_DIR$/opencvsample/opencvsample.iml" />
       <module fileurl="file://$PROJECT_DIR$/permission/permission.iml" filepath="$PROJECT_DIR$/permission/permission.iml" />
+      <module fileurl="file://$PROJECT_DIR$/puzzle/puzzle.iml" filepath="$PROJECT_DIR$/puzzle/puzzle.iml" />
     </modules>
   </component>
 </project>

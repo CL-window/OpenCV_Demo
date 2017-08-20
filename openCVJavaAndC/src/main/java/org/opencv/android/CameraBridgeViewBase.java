@@ -433,30 +433,13 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
                 w = mCacheBitmap.getWidth();
                 h = mCacheBitmap.getHeight();
 
-//                if(mPortrait) {
-//                    w = mCacheBitmap.getHeight();
-//                    h = mCacheBitmap.getWidth();
-//                } else {
-//                    w = mCacheBitmap.getWidth();
-//                    h = mCacheBitmap.getHeight();
-//                }
-
-                int testXY = 600;
-                int testStartXY = 100;
                 Rect dest = new Rect((int)((canvas.getWidth() - scale*w) / 2),
                         (int)((canvas.getHeight() - scale*h) / 2),
                         (int)((canvas.getWidth() - scale*w) / 2 + scale*w),
                         (int)((canvas.getHeight() - scale*h) / 2 + scale*h));
                 canvas.drawBitmap(mCacheBitmap, new Rect(0,0,mCacheBitmap.getWidth(), mCacheBitmap.getHeight()),
-//                        new Rect(testStartXY,testStartXY,testXY,testXY)
                         new Rect(0,0,canvas.getWidth(),canvas.getHeight()) // 全屏显示
                         , null);
-
-//                mPaint.setAntiAlias(true);
-//                mPaint.setColor(Color.RED);
-//                mPaint.setStrokeWidth(5);
-//                mPaint.setStyle(Paint.Style.STROKE);
-//                canvas.drawRect(testStartXY, testStartXY, testXY, testXY ,mPaint);
 
                 if (mFpsMeter != null) {
                     mFpsMeter.measure();
