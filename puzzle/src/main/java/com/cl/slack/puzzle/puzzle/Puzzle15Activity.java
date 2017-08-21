@@ -1,6 +1,7 @@
 package com.cl.slack.puzzle.puzzle;
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
@@ -28,11 +29,12 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 
-/**
- * TODO 暂时废弃，我无法完成拼图，总是最后有两个是反的
- */
 public class Puzzle15Activity extends AppCompatActivity implements CvCameraViewListener, View.OnTouchListener {
 
+    public static String KEY_DIFFICULTY = "puzzle_difficulty";
+    public static int DIFFICULTY_EASY = 3;
+    public static int DIFFICULTY_MIDDLE = 4;
+    public static int DIFFICULTY_HARDY = 5;
     private static final String  TAG = "Sample::Puzzle15";
 
     private JavaCameraView       mOpenCvCameraView;
@@ -77,22 +79,15 @@ public class Puzzle15Activity extends AppCompatActivity implements CvCameraViewL
         mOpenCvCameraView = (JavaCameraView) findViewById(R.id.puzzle_camera_view);
         mOpenCvCameraView.setVisibility(CameraBridgeViewBase.VISIBLE);
         mOpenCvCameraView.setCvCameraViewListener(this);
-        mPuzzle15 = new Puzzle15Processor();
+        int d = DIFFICULTY_MIDDLE;
+        Intent intent = getIntent();
+        if(intent != null) {
+            d = intent.getIntExtra(KEY_DIFFICULTY, DIFFICULTY_MIDDLE);
+        }
+        mPuzzle15 = new Puzzle15Processor(d);
         mPuzzle15.setPuzzleResult(mPuzzleResult);
         mPuzzle15.prepareNewGame();
 
-        // TODO: 17/8/21 暂时只处理一次权限
-        PermissionsManager.getInstance().requestAllManifestPermissionsIfNecessary(this, new PermissionsResultAction() {
-            @Override
-            public void onGranted() {
-                initOpenCVlibIfNecessary();
-            }
-
-            @Override
-            public void onDenied(String permission) {
-                Toast.makeText(Puzzle15Activity.this,"需要权限：" + permission, Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private Puzzle15Processor.PuzzleResult mPuzzleResult = new Puzzle15Processor.PuzzleResult() {

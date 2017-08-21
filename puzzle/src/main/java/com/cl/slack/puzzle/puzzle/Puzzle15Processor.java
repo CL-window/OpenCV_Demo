@@ -2,7 +2,6 @@ package com.cl.slack.puzzle.puzzle;
 
 import android.util.Log;
 
-import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -22,9 +21,9 @@ import java.util.Arrays;
  */
 public class Puzzle15Processor {
 
-    private static final int GRID_SIZE = 4;
-    private static final int GRID_AREA = GRID_SIZE * GRID_SIZE;
-    private static final int GRID_EMPTY_INDEX = GRID_AREA - 1;
+    private final int GRID_SIZE;
+    private final int GRID_AREA;
+    private final int GRID_EMPTY_INDEX;
     private static final String TAG = "Puzzle15Processor";
     private static final Scalar GRID_EMPTY_COLOR = new Scalar(0x33, 0x33, 0x33, 0xFF);
 
@@ -39,7 +38,11 @@ public class Puzzle15Processor {
 
     private PuzzleResult mPuzzleResult;
 
-    public Puzzle15Processor() {
+    public Puzzle15Processor(int difficulty) {
+        GRID_SIZE = difficulty;
+        GRID_AREA = GRID_SIZE * GRID_SIZE;
+        GRID_EMPTY_INDEX = GRID_AREA - 1;
+
         mTextWidths = new int[GRID_AREA];
         mTextHeights = new int[GRID_AREA];
 
@@ -50,12 +53,10 @@ public class Puzzle15Processor {
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
                 int k = (GRID_SIZE - 1 - i) + GRID_SIZE * j;
-                mPuzzleSuccess[i*GRID_SIZE + j] = k;
+                int index = i*GRID_SIZE + j;
+                mPuzzleSuccess[index] = k;
+                mIndexes[index] = k;
             }
-        }
-
-        for (int i = 0; i < GRID_AREA; i++) {
-            mIndexes[i] = i;
         }
     }
 
