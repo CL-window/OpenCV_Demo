@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 淡入 -->
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fillAfter="true" >
+
+    <alpha
+        android:duration="500"
+        android:fromAlpha="0.0"
+        android:interpolator="@android:anim/accelerate_interpolator"
+        android:toAlpha="1.0" />
+
+    <!--
+    android：pivotX表示缩放的中轴点X坐标，距离自身左边缘的位置
+    比如你想以图象的中心为中轴点，就是50%
+    -->
+    <scale
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:duration="500"
+        android:fromXScale="0.5"
+        android:fromYScale="0.5"
+        android:pivotX="50%"
+        android:pivotY="50%"
+        android:toXScale="2"
+        android:toYScale="2"
+
+        />
+
+    <alpha
+        android:startOffset="700"
+        android:duration="300"
+        android:fromAlpha="1.0"
+        android:interpolator="@android:anim/accelerate_interpolator"
+        android:toAlpha="0.0" />
+
+
+</set>

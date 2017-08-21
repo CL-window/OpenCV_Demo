@@ -2,6 +2,7 @@ package com.cl.slack.puzzle.puzzle;
 
 import android.util.Log;
 
+import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -9,8 +10,13 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import java.util.Arrays;
+
 
 /**
+ * created by slack
+ * on 17/8/21 下午12:04
+ *
  * This class is a controller for puzzle game.
  * It converts the image from Camera into the shuffled image
  */
@@ -22,6 +28,7 @@ public class Puzzle15Processor {
     private static final String TAG = "Puzzle15Processor";
     private static final Scalar GRID_EMPTY_COLOR = new Scalar(0x33, 0x33, 0x33, 0xFF);
 
+    private final int[] mPuzzleSuccess;
     private int[] mIndexes;
     private int[] mTextWidths;
     private int[] mTextHeights;
@@ -30,14 +37,26 @@ public class Puzzle15Processor {
     private Mat[] mCells15;
     private boolean mShowTileNumbers = true;
 
+    private PuzzleResult mPuzzleResult;
+
     public Puzzle15Processor() {
         mTextWidths = new int[GRID_AREA];
         mTextHeights = new int[GRID_AREA];
 
         mIndexes = new int[GRID_AREA];
+        mPuzzleSuccess = new int[GRID_AREA];
 
-        for (int i = 0; i < GRID_AREA; i++)
+        // 3，7，11，15，2，6，10，14，2，5，9，13，0，4，8，12
+        for (int i = 0; i < GRID_SIZE; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                int k = (GRID_SIZE - 1 - i) + GRID_SIZE * j;
+                mPuzzleSuccess[i*GRID_SIZE + j] = k;
+            }
+        }
+
+        for (int i = 0; i < GRID_AREA; i++) {
             mIndexes[i] = i;
+        }
     }
 
     /* this method is intended to make processor prepared for a new game */
@@ -73,9 +92,10 @@ public class Puzzle15Processor {
      * the tiles as specified by mIndexes array
      */
     public synchronized Mat puzzleFrame(Mat inputPicture) {
-        Mat[] cells = new Mat[GRID_AREA];
         int rows = inputPicture.rows();
         int cols = inputPicture.cols();
+
+        Mat[] cells = new Mat[GRID_AREA];
 
         rows = rows - rows % 4;
         cols = cols - cols % 4;
@@ -145,11 +165,19 @@ public class Puzzle15Processor {
     }
 
     /**
-     * 竖屏
+     * 竖屏 数组记录item的顺序
      * 12   8    4    0
      * 13   9    5    1
      * 14   10   6    2
      * 15   11   7    3
+     *
+     * 所以正确的次序是
+     * 1    2   3   4
+     * 5    6   7   8
+     * 9    10  11  12
+     * 13   14  15  16
+     *
+     * 3，7，11，15，2，6，10，14，2，5，9，13，0，4，8，12
      */
     public void deliverTouchEvent(int x, int y) {
         int rows = mRgba15.rows();
@@ -206,6 +234,21 @@ public class Puzzle15Processor {
                 mIndexes[idxtoswap] = touched;
             }
         }
+
+        checkPuzzleSuccess();
+    }
+
+    public void setPuzzleResult(PuzzleResult l) {
+        mPuzzleResult = l;
+    }
+
+    private void checkPuzzleSuccess() {
+
+        if(Arrays.equals(mPuzzleSuccess, mIndexes)) {
+            if(mPuzzleResult != null) {
+                mPuzzleResult.onPuzzleSuccess();
+            }
+        }
     }
 
     private boolean legal(int index) {
@@ -244,5 +287,9 @@ public class Puzzle15Processor {
             }
         }
         return sum % 2 == 0;
+    }
+
+    public interface PuzzleResult {
+        void onPuzzleSuccess();
     }
 }

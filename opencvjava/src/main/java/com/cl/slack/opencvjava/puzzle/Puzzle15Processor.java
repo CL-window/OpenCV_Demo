@@ -23,9 +23,9 @@ public class Puzzle15Processor {
     private static final String TAG = "Puzzle15Processor";
     private static final Scalar GRID_EMPTY_COLOR = new Scalar(0x33, 0x33, 0x33, 0xFF);
 
-    private int[] mIndexes;
-    private int[] mTextWidths;
-    private int[] mTextHeights;
+    private int[]   mIndexes;
+    private int[]   mTextWidths;
+    private int[]   mTextHeights;
 
     private Mat mRgba15;
     private Mat[] mCells15;
@@ -35,7 +35,7 @@ public class Puzzle15Processor {
         mTextWidths = new int[GRID_AREA];
         mTextHeights = new int[GRID_AREA];
 
-        mIndexes = new int[GRID_AREA];
+        mIndexes = new int [GRID_AREA];
 
         for (int i = 0; i < GRID_AREA; i++)
             mIndexes[i] = i;
@@ -78,18 +78,18 @@ public class Puzzle15Processor {
         int rows = inputPicture.rows();
         int cols = inputPicture.cols();
 
-        rows = rows - rows % 4;
-        cols = cols - cols % 4;
+        rows = rows - rows%4;
+        cols = cols - cols%4;
 
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
                 int k = i * GRID_SIZE + j;
-                cells[k] = inputPicture.submat(i * inputPicture.rows() / GRID_SIZE, (i + 1) * inputPicture.rows() / GRID_SIZE, j * inputPicture.cols() / GRID_SIZE, (j + 1) * inputPicture.cols() / GRID_SIZE);
+                cells[k] = inputPicture.submat(i * inputPicture.rows() / GRID_SIZE, (i + 1) * inputPicture.rows() / GRID_SIZE, j * inputPicture.cols()/ GRID_SIZE, (j + 1) * inputPicture.cols() / GRID_SIZE);
             }
         }
 
-        rows = rows - rows % 4;
-        cols = cols - cols % 4;
+        rows = rows - rows%4;
+        cols = cols - cols%4;
 
         // copy shuffled tiles
         for (int i = 0; i < GRID_AREA; i++) {
@@ -124,10 +124,9 @@ public class Puzzle15Processor {
         int row = (int) Math.floor(y * GRID_SIZE / rows);
         int col = (int) Math.floor(x * GRID_SIZE / cols);
 
-        Log.e(TAG, "row:" + row + " col:" + col);
         if (row < 0 || row >= GRID_SIZE || col < 0 || col >= GRID_SIZE) {
             Log.e(TAG, "It is not expected to get touch event outside of picture");
-            return;
+            return ;
         }
 
         int idx = row * GRID_SIZE + col;

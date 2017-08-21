@@ -255,15 +255,19 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
         return result;
     }
 
+    public void stopCamera() {
+        if (mCamera != null) {
+            mCamera.stopPreview();
+            mCamera.setPreviewCallback(null);
+
+            mCamera.release();
+        }
+        mCamera = null;
+    }
+
     protected void releaseCamera() {
         synchronized (this) {
-            if (mCamera != null) {
-                mCamera.stopPreview();
-                mCamera.setPreviewCallback(null);
-
-                mCamera.release();
-            }
-            mCamera = null;
+            stopCamera();
             if (mFrameChain != null) {
                 mFrameChain[0].release();
                 mFrameChain[1].release();
@@ -346,12 +350,43 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
         if (BuildConfig.DEBUG)
             Log.d(TAG, "Preview Frame received. Frame size: " + frame.length);
         synchronized (this) {
-            mFrameChain[mChainIdx].put(0, 0, frame);
-            mCameraFrameReady = true;
-            this.notify();
+            if(!lockView) {
+                mFrameChain[mChainIdx].put(0, 0, frame);
+                mCameraFrameReady = true;
+                this.notify();
+            }
         }
         if (mCamera != null)
             mCamera.addCallbackBuffer(mBuffer);
+    }
+
+
+    private boolean lockView;
+    public void recoverLockCameraView() {
+        synchronized (this) {
+            lockView = false;
+            mCameraFrameReady = true;
+            this.notify();
+        }
+
+    }
+    public void lockCameraView() {
+        synchronized (this) {
+            lockView = true;
+            mCameraFrameReady = false;
+            this.notify();
+        }
+
+    }
+
+    public void updateLockView() {
+        synchronized (this) {
+            if(lockView) {
+                if (!mFrameChain[1 - mChainIdx].empty())
+                    deliverAndDrawFrame(mCameraFrame[1 - mChainIdx]);
+            }
+            this.notify();
+        }
     }
 
     private Mat mRgbaT;
