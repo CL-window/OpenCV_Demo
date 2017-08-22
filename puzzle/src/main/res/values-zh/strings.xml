@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">puzzle</string>
+    <string name="easy">入门</string>
+    <string name="middle">中级</string>
+    <string name="hardy">高级</string>
+    <string name="support_developers">微信小小支持一下吧</string>
+
+    <string name="puzzle_need_permission">需要权限:</string>
+    <string name="puzzle_success">恭喜恭喜，成功啦</string>
+    <string name="puzzle_time_out">换一局吧，这一局太难了</string>
+    <string name="puzzle_time_start">puzzle 开始计时</string>
+    <string name="puzzle_lock_view">请对准取景窗口，即将锁定游戏屏幕</string>
+
+    <string name="puzzle_share">分享</string>
+    <string name="puzzle_share_msg">快来 Puzzle 跟我一起玩吧</string>
+</resources>

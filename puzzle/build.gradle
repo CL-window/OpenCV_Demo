@@ -1,9 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        slack {
+            keyAlias 'slack'
+            keyPassword '000000'
+            storeFile file('/Users/jf/Desktop/slack/android/keyStore/slack_key_store.jks')
+            storePassword '000000'
+        }
+    }
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
-
     defaultConfig {
         applicationId "com.cl.slack.puzzle"
         minSdkVersion 19
@@ -16,8 +23,33 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            // Zipalign优化
+            zipAlignEnabled true
+            // 移除无用的resource文件
+            shrinkResources true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            multiDexKeepProguard file('multi-dex-keep.pro')
+            // keep specific classes using proguard syntax
+
+            debuggable false
+            jniDebuggable false
+            renderscriptDebuggable false
+
+            signingConfig signingConfigs.slack
+            pseudoLocalesEnabled true
+        }
+
+        debug {
+            debuggable true
+            jniDebuggable true
+
+            multiDexKeepProguard file('multi-dex-keep.pro')
+            // keep specific classes using proguard syntax
+
+            signingConfig signingConfigs.slack
+            renderscriptDebuggable true
         }
     }
 }

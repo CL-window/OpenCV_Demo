@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">puzzle</string>
+    <string name="easy">easy</string>
+    <string name="middle">middle</string>
+    <string name="hardy">hardy</string>
+    <string name="support_developers">support developers by Weichart</string>
+
+    <string name="puzzle_need_permission">need permission:</string>
+    <string name="puzzle_success">Congratulations！</string>
+    <string name="puzzle_time_out">Let us change the game. It is too difficult</string>
+    <string name="puzzle_time_start">puzzle Start clocking</string>
+    <string name="puzzle_lock_view">Please point to the viewfinder window and lock the game screen</string>
+
+
+    <string name="puzzle_share">Share</string>
+    <string name="puzzle_share_msg">I am playing puzzle, play with me</string>
+
 </resources>

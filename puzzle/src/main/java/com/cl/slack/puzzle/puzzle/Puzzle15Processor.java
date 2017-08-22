@@ -32,7 +32,7 @@ public class Puzzle15Processor {
     private int[] mTextWidths;
     private int[] mTextHeights;
 
-    private Mat mRgba15;
+    public Mat mRgba15;
     private Mat[] mCells15;
     private boolean mShowTileNumbers = true;
 
@@ -275,18 +275,51 @@ public class Puzzle15Processor {
     private boolean isPuzzleSolvable() {
 
         int sum = 0;
-        for (int i = 0; i < GRID_AREA; i++) {
-            if (mIndexes[i] == GRID_EMPTY_INDEX)
-                sum += (i / GRID_SIZE) + 1;
-            else {
-                int smaller = 0;
-                for (int j = i + 1; j < GRID_AREA; j++) {
-                    if (mIndexes[j] < mIndexes[i])
-                        smaller++;
+        // opencv 的原始算法，有一些问题
+//        for (int i = 0; i < GRID_AREA; i++) {
+//            if (mIndexes[i] == GRID_EMPTY_INDEX)
+//                sum += (i / GRID_SIZE) + 1;
+//            else {
+//                int smaller = 0;
+//                for (int j = i + 1; j < GRID_AREA; j++) {
+//                    if (mIndexes[j] < mIndexes[i])
+//                        smaller++;
+//                }
+//                sum += smaller;
+//            }
+//        }
+
+        /**
+         * 计算 每个数的前面比它大的数的个数
+         */
+        for (int i = 1; i < GRID_AREA; i++) {
+            if(mIndexes[i] == GRID_EMPTY_INDEX) {
+                continue;
+            }
+            for (int j = 0; j < i; j++) {
+                if(mIndexes[j] == GRID_EMPTY_INDEX) {
+                    continue;
                 }
-                sum += smaller;
+                if (mIndexes[j] > mIndexes[i])
+                    sum++;
             }
         }
+
+        /**
+         * 计算 每个数的后面面比它小的数的个数
+         */
+//        for (int i = 0; i < GRID_AREA - 1; i++) {
+//            if(mIndexes[i] == GRID_EMPTY_INDEX) {
+//                continue;
+//            }
+//            for (int j = i + 1; j < GRID_AREA; j++) {
+//                if(mIndexes[j] == GRID_EMPTY_INDEX) {
+//                    continue;
+//                }
+//                if (mIndexes[j] < mIndexes[i])
+//                    sum++;
+//            }
+//        }
         return sum % 2 == 0;
     }
 

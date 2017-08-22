@@ -1,9 +1,13 @@
 package com.cl.slack.puzzle.puzzle;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.SystemClock;
+import android.support.annotation.StringRes;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
@@ -18,8 +22,8 @@ import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.cl.slack.permission.PermissionsManager;
-import com.cl.slack.permission.PermissionsResultAction;
 import com.cl.slack.puzzle.R;
+import com.cl.slack.puzzle.animation.AlertDialog;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -28,6 +32,11 @@ import org.opencv.android.JavaCameraView;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class Puzzle15Activity extends AppCompatActivity implements CvCameraViewListener, View.OnTouchListener {
 
@@ -44,6 +53,8 @@ public class Puzzle15Activity extends AppCompatActivity implements CvCameraViewL
     private MenuItem             mItemReLockView;
 
     private Chronometer mPuzzleTime;
+
+    private AlertDialog mAlertDialog;
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
 
@@ -93,9 +104,24 @@ public class Puzzle15Activity extends AppCompatActivity implements CvCameraViewL
     private Puzzle15Processor.PuzzleResult mPuzzleResult = new Puzzle15Processor.PuzzleResult() {
         @Override
         public void onPuzzleSuccess() {
-            showMsg("恭喜恭喜，成功啦");
+            showMsg(R.string.puzzle_success);
+            mPuzzleTime.stop();
+            showAlertDialog();
         }
     };
+
+    private void showAlertDialog() {
+        if(mAlertDialog == null) {
+            mAlertDialog = new AlertDialog(Puzzle15Activity.this);
+        }
+        mAlertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                mAlertDialog = null;
+            }
+        });
+        mAlertDialog.show();
+    }
 
     private Chronometer.OnChronometerTickListener mPuzzleTickListener = new Chronometer.OnChronometerTickListener() {
         @Override
@@ -105,7 +131,7 @@ public class Puzzle15Activity extends AppCompatActivity implements CvCameraViewL
                 // time out
                 chronometer.stop();
                 chronometer.setBase(SystemClock.elapsedRealtime());
-                showMsg("换一局吧，这一局太难了");
+                showMsg(R.string.puzzle_time_out);
             }
         }
     };
@@ -179,7 +205,7 @@ public class Puzzle15Activity extends AppCompatActivity implements CvCameraViewL
     public boolean onTouch(View view, MotionEvent event) {
         if(!mStartPuzzle) {
             mStartPuzzle = true;
-            showMsg("puzzle 开始计时");
+            showMsg(R.string.puzzle_time_start);
             mPuzzleTime.setBase(SystemClock.elapsedRealtime());
             mPuzzleTime.start();
         }
@@ -194,7 +220,7 @@ public class Puzzle15Activity extends AppCompatActivity implements CvCameraViewL
         if(mLocking) {
             return;
         }
-        showMsg("请对准取景窗口，即将锁定游戏屏幕");
+        showMsg(R.string.puzzle_lock_view);
         mOpenCvCameraView.recoverLockCameraView();
         mLocking = true;
         mStartPuzzle = false;
@@ -250,7 +276,7 @@ public class Puzzle15Activity extends AppCompatActivity implements CvCameraViewL
         return mPuzzle15.puzzleFrame(inputFrame);
     }
 
-    private void showMsg(String msg) {
-        Toast.makeText(this,msg, Toast.LENGTH_SHORT).show();
+    private void showMsg(@StringRes int id) {
+        Toast.makeText(this, id, Toast.LENGTH_SHORT).show();
     }
 }

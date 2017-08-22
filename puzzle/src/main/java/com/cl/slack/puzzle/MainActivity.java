@@ -25,7 +25,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onDenied(String permission) {
-                Toast.makeText(MainActivity.this,"需要权限：" + permission, Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, getString(R.string.puzzle_need_permission) + permission, Toast.LENGTH_SHORT).show();
             }
         });
     }
