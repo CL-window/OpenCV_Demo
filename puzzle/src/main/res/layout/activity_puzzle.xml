@@ -19,5 +19,21 @@
         android:focusable="true"
         android:layout_gravity="right"/>
 
+    <ImageView
+        android:id="@+id/puzzle_switch_camera"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@mipmap/puzzle_switch_camera"/>
+
+    <ImageView
+        android:id="@+id/puzzle_camera_btn"
+        android:layout_width="70dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="50dp"
+        android:src="@mipmap/puzzle_pic"/>
+
 
 </FrameLayout>

@@ -240,6 +240,7 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
                     } else
                        mCamera.setPreviewDisplay(null);
 
+                    mCamera.cancelAutoFocus();
                     /* Finally we are ready to start the preview */
                     Log.d(TAG, "startPreview");
                     mCamera.startPreview();
@@ -281,10 +282,10 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
 
     public void switchCamera() {
        releaseCamera();
-        if(mCameraIndex == CAMERA_ID_BACK) {
-            mCameraIndex = CAMERA_ID_FRONT;
-        } else {
+        if(mCameraIndex == CAMERA_ID_FRONT) {
             mCameraIndex = CAMERA_ID_BACK;
+        } else {
+            mCameraIndex = CAMERA_ID_FRONT;
         }
         initializeCamera(mWidth, mHeight);
     }

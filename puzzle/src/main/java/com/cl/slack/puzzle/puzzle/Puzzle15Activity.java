@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.SystemClock;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Chronometer;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
@@ -44,7 +46,15 @@ public class Puzzle15Activity extends AppCompatActivity implements CvCameraViewL
     public static int DIFFICULTY_EASY = 3;
     public static int DIFFICULTY_MIDDLE = 4;
     public static int DIFFICULTY_HARDY = 5;
-    private static final String  TAG = "Sample::Puzzle15";
+    private static final String  TAG = "Puzzle15";
+
+    enum ViewState {
+        STATE_PIC, // 拍照选景
+        STATE_PUZZLE; // puzzle 游戏
+    }
+
+    private ViewState mViewState = ViewState.STATE_PIC;
+    private ImageView mPuzzlePic;
 
     private JavaCameraView       mOpenCvCameraView;
     private Puzzle15Processor    mPuzzle15;
@@ -99,6 +109,39 @@ public class Puzzle15Activity extends AppCompatActivity implements CvCameraViewL
         mPuzzle15.setPuzzleResult(mPuzzleResult);
         mPuzzle15.prepareNewGame();
 
+        mPuzzlePic = (ImageView) findViewById(R.id.puzzle_camera_btn);
+        mPuzzlePic.setOnClickListener(mOnClickListener);
+
+        findViewById(R.id.puzzle_switch_camera).setOnClickListener(mOnClickListener);
+
+        changeViewWithState();
+    }
+
+    private View.OnClickListener mOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.puzzle_camera_btn:
+                    showDelayView();
+                    break;
+                case R.id.puzzle_switch_camera:
+                    mOpenCvCameraView.switchCamera();
+                    break;
+            }
+        }
+    };
+
+    private void changeViewWithState() {
+        switch (mViewState) {
+            case STATE_PIC:
+                mPuzzlePic.setVisibility(View.VISIBLE);
+                mPuzzleTime.setVisibility(View.GONE);
+                break;
+            case STATE_PUZZLE:
+                mPuzzlePic.setVisibility(View.GONE);
+                mPuzzleTime.setVisibility(View.VISIBLE);
+                break;
+        }
     }
 
     private Puzzle15Processor.PuzzleResult mPuzzleResult = new Puzzle15Processor.PuzzleResult() {
@@ -174,7 +217,7 @@ public class Puzzle15Activity extends AppCompatActivity implements CvCameraViewL
         Log.i(TAG, "called onCreateOptionsMenu");
         mItemHideNumbers = menu.add("Show/hide tile numbers");
         mItemStartNewGame = menu.add("Start new game");
-        mItemReLockView = menu.add("Lock/Relock View");
+        mItemReLockView = menu.add("Relock View");
         return true;
     }
 
@@ -215,32 +258,29 @@ public class Puzzle15Activity extends AppCompatActivity implements CvCameraViewL
         return false;
     }
 
-    private boolean mLocking;
     private void lockView() {
-        if(mLocking) {
-            return;
-        }
-        showMsg(R.string.puzzle_lock_view);
+        mViewState = ViewState.STATE_PIC;
         mOpenCvCameraView.recoverLockCameraView();
-        mLocking = true;
         mStartPuzzle = false;
         mPuzzleTime.stop();
         mPuzzleTime.setBase(SystemClock.elapsedRealtime());
-        showDelayView();
+        changeViewWithState();
     }
 
     private void showDelayView() {
+        mOpenCvCameraView.lockCameraView();
         TimeDelay timeDelay = new TimeDelay(this);
         mTimeDelayPWindow = new TimeDelayPWindow(timeDelay);
 
         timeDelay.setTimeDelayListener(new TimeDelay.onTimeDelayListener() {
             @Override
             public void timeDelayDone() {
+                mViewState = ViewState.STATE_PUZZLE;
+                changeViewWithState();
                 if (mTimeDelayPWindow != null) {
                     mTimeDelayPWindow.dismiss();
                 }
-                mOpenCvCameraView.lockCameraView();
-                mLocking = false;
+                mOpenCvCameraView.updateLockView();
             }
         });
 
@@ -273,7 +313,13 @@ public class Puzzle15Activity extends AppCompatActivity implements CvCameraViewL
     }
 
     public Mat onCameraFrame(Mat inputFrame) {
-        return mPuzzle15.puzzleFrame(inputFrame);
+        switch (mViewState) {
+            case STATE_PUZZLE:
+                return mPuzzle15.puzzleFrame(inputFrame);
+            case STATE_PIC:
+            default:
+                return inputFrame;
+        }
     }
 
     private void showMsg(@StringRes int id) {
